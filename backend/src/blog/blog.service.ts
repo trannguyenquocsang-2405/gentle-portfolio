@@ -1,26 +1,40 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 
 @Injectable()
 export class BlogService {
-  create(createBlogDto: CreateBlogDto) {
-    return 'This action adds a new blog';
+  constructor(private prisma: PrismaService) {}
+
+  create(createBlogDto: any) {
+    return this.prisma.blogPost.create({
+      data: createBlogDto,
+    });
   }
 
   findAll() {
-    return `This action returns all blog`;
+    return this.prisma.blogPost.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} blog`;
+    return this.prisma.blogPost.findUnique({
+      where: { id },
+    });
   }
 
-  update(id: number, updateBlogDto: UpdateBlogDto) {
-    return `This action updates a #${id} blog`;
+  update(id: number, updateBlogDto: any) {
+    return this.prisma.blogPost.update({
+      where: { id },
+      data: updateBlogDto,
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} blog`;
+    return this.prisma.blogPost.delete({
+      where: { id },
+    });
   }
 }
