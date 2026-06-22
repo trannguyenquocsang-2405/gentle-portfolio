@@ -114,8 +114,9 @@ export function Home() {
         <h2 className="text-2xl font-serif mb-6">Let's Connect</h2>
         <div className="flex justify-center flex-wrap gap-6">
           {Array.isArray(socialLinks) && socialLinks.length > 0 ? socialLinks.map(link => (
-            <a key={link.id} href={link.url} target="_blank" rel="noreferrer" className="text-[#4A4A4A] hover:text-[#A3B18A] transition-colors">
-              {link.platform}
+            <a key={link.id} href={link.url} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[#4A4A4A] hover:text-[#A3B18A] transition-colors group">
+              {link.iconUrl && <img src={link.iconUrl} alt={link.platform} className="w-6 h-6 object-contain grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all" />}
+              <span>{link.platform}</span>
             </a>
           )) : (
             <p className="text-[#888888]">No contact info available.</p>

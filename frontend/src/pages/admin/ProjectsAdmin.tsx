@@ -44,7 +44,8 @@ export function ProjectsAdmin() {
       if (formData.id) {
         await axios.patch(`${API_URL}/project/${formData.id}`, formData);
       } else {
-        await axios.post(`${API_URL}/project`, formData);
+        const { id, ...postData } = formData;
+        await axios.post(`${API_URL}/project`, postData);
       }
       setShowForm(false);
       setFormData({ id: null, title: '', description: '', imageUrl: '', link: '' });
