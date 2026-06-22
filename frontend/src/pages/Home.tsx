@@ -86,7 +86,7 @@ export function Home() {
               <div key={cat} className="space-y-4">
                 <h3 className="text-xl font-medium text-[#4A4A4A] text-center md:text-left">{cat}</h3>
                 <div className="flex flex-wrap justify-center md:justify-start gap-4">
-                  {(catSkills as any[]).map(skill => (
+                  {(catSkills as any[]).map((skill: any) => (
                     <div key={skill.id} className="flex items-center gap-2 px-5 py-2.5 bg-white rounded-xl shadow-sm text-[#4A4A4A] border border-[#E5E5E5] hover:border-[#A3B18A] hover:shadow-md transition-all group cursor-default">
                       {skill.iconUrl && <img src={skill.iconUrl} alt={skill.name} className="w-5 h-5 object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" />}
                       <span className="font-medium">{skill.name}</span>

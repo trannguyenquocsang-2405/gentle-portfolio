@@ -189,7 +189,7 @@ export function SkillsAdmin() {
             <div key={cat} className="space-y-4">
               <h3 className="text-lg font-serif text-[#4A4A4A] pb-2 border-b border-[#E5E5E5]">{cat}</h3>
               <div className="flex flex-wrap gap-4">
-                {catSkills.map(skill => (
+                {(catSkills as any[]).map((skill: any) => (
                   <div key={skill.id} className="flex items-center gap-3 px-5 py-2 bg-[#FAF9F6] rounded-full border border-[#E5E5E5]">
                     {skill.iconUrl && <img src={skill.iconUrl} alt={skill.name} className="w-5 h-5 object-contain" />}
                     <span className="text-[#4A4A4A]">{skill.name}</span>
