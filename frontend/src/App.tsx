@@ -8,6 +8,7 @@ import { SkillsAdmin } from './pages/admin/SkillsAdmin';
 import { ProjectsAdmin } from './pages/admin/ProjectsAdmin';
 import { BlogAdmin } from './pages/admin/BlogAdmin';
 import { BlogEditor } from './pages/admin/BlogEditor';
+import { SocialLinksAdmin } from './pages/admin/SocialLinksAdmin';
 import { useEffect, useState } from 'react';
 
 function Navbar() {
@@ -56,6 +57,7 @@ function App() {
             <Route path="blogs" element={<BlogAdmin />} />
             <Route path="blogs/new" element={<BlogEditor />} />
             <Route path="blogs/edit/:id" element={<BlogEditor />} />
+            <Route path="contact" element={<SocialLinksAdmin />} />
           </Route>
         </Routes>
       </div>

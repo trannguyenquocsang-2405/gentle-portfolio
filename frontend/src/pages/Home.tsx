@@ -9,21 +9,24 @@ export function Home() {
   const [skills, setSkills] = useState<any[]>([]);
   const [projects, setProjects] = useState<any[]>([]);
   const [blogs, setBlogs] = useState<any[]>([]);
+  const [socialLinks, setSocialLinks] = useState<any[]>([]);
 
   useEffect(() => {
     // Fetch data from backend
     const fetchData = async () => {
       try {
-        const [profileRes, skillsRes, projectsRes, blogsRes] = await Promise.all([
+        const [profileRes, skillsRes, projectsRes, blogsRes, socialRes] = await Promise.all([
           axios.get(`${API_URL}/profile`),
           axios.get(`${API_URL}/skill`),
           axios.get(`${API_URL}/project`),
           axios.get(`${API_URL}/blog`),
+          axios.get(`${API_URL}/social-link`),
         ]);
         setProfile(profileRes.data[0]);
         setSkills(skillsRes.data);
         setProjects(projectsRes.data);
         setBlogs(blogsRes.data);
+        setSocialLinks(socialRes.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -109,10 +112,14 @@ export function Home() {
       {/* Footer / Contact */}
       <footer id="contact" className="text-center pt-10 pb-6 border-t border-[#E5E5E5]">
         <h2 className="text-2xl font-serif mb-6">Let's Connect</h2>
-        <div className="flex justify-center gap-6">
-          <a href="#" className="text-[#4A4A4A] hover:text-[#A3B18A] transition-colors">Github</a>
-          <a href="#" className="text-[#4A4A4A] hover:text-[#A3B18A] transition-colors">LinkedIn</a>
-          <a href="#" className="text-[#4A4A4A] hover:text-[#A3B18A] transition-colors">Email</a>
+        <div className="flex justify-center flex-wrap gap-6">
+          {Array.isArray(socialLinks) && socialLinks.length > 0 ? socialLinks.map(link => (
+            <a key={link.id} href={link.url} target="_blank" rel="noreferrer" className="text-[#4A4A4A] hover:text-[#A3B18A] transition-colors">
+              {link.platform}
+            </a>
+          )) : (
+            <p className="text-[#888888]">No contact info available.</p>
+          )}
         </div>
         <p className="text-sm text-[#888888] mt-10">© {new Date().getFullYear()} MyPortfolio. Designed with simplicity.</p>
       </footer>
