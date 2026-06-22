@@ -5,7 +5,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
-import rehypeSanitize from 'rehype-sanitize';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -83,7 +83,18 @@ export function BlogDetail() {
         <div className="prose prose-stone prose-lg max-w-none text-[#4A4A4A]">
           <ReactMarkdown 
             components={renderers}
-            rehypePlugins={[rehypeSanitize]}
+            rehypePlugins={[
+              [rehypeSanitize, {
+                ...defaultSchema,
+                attributes: {
+                  ...defaultSchema.attributes,
+                  code: [
+                    ...(defaultSchema.attributes?.code || []),
+                    'className',
+                  ],
+                },
+              }]
+            ]}
           >
             {blog.content}
           </ReactMarkdown>
