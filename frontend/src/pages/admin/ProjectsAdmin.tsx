@@ -6,10 +6,10 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export function ProjectsAdmin() {
   const [projects, setProjects] = useState<any[]>([]);
+  const [formData, setFormData] = useState({ id: null, title: '', description: '', imageUrl: '', demoUrl: '', sourceUrl: '' });
   const [showForm, setShowForm] = useState(false);
   const [uploading, setUploading] = useState(false);
   
-  const [formData, setFormData] = useState({ id: null, title: '', description: '', imageUrl: '', link: '' });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export function ProjectsAdmin() {
         await axios.post(`${API_URL}/project`, postData);
       }
       setShowForm(false);
-      setFormData({ id: null, title: '', description: '', imageUrl: '', link: '' });
+      setFormData({ id: null, title: '', description: '', imageUrl: '', demoUrl: '', sourceUrl: '' });
       fetchProjects();
     } catch (error) {
       alert('Failed to save project');
@@ -75,7 +75,7 @@ export function ProjectsAdmin() {
       <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-[#E5E5E5]">
         <h2 className="text-2xl font-serif text-[#4A4A4A]">Manage Projects</h2>
         <button 
-          onClick={() => { setShowForm(!showForm); setFormData({ id: null, title: '', description: '', imageUrl: '', link: '' }); }}
+          onClick={() => { setShowForm(!showForm); setFormData({ id: null, title: '', description: '', imageUrl: '', demoUrl: '', sourceUrl: '' }); }}
           className="flex items-center gap-2 px-6 py-2 bg-[#A3B18A] text-white rounded-xl hover:bg-[#8B9973] transition-colors"
         >
           <Plus size={20} /> {showForm ? 'Cancel' : 'Add Project'}
@@ -84,20 +84,26 @@ export function ProjectsAdmin() {
 
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-[#E5E5E5] space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6">
             <div className="space-y-2">
               <label className="block text-sm font-medium text-[#6B6B6B]">Title</label>
               <input type="text" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A]" />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#6B6B6B]">Link URL</label>
-              <input type="text" value={formData.link} onChange={e => setFormData({...formData, link: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A]" />
+              <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Description</label>
+              <textarea required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] min-h-[100px]" />
             </div>
-            <div className="space-y-2 md:col-span-2">
-              <label className="block text-sm font-medium text-[#6B6B6B]">Description</label>
-              <textarea rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] resize-none" />
+            <div className="flex flex-wrap md:flex-nowrap gap-4">
+              <div className="w-full md:w-1/2">
+                <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Live Demo URL (Optional)</label>
+                <input type="text" value={formData.demoUrl || ''} onChange={e => setFormData({...formData, demoUrl: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A]" />
+              </div>
+              <div className="w-full md:w-1/2">
+                <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Source Code URL (Optional)</label>
+                <input type="text" value={formData.sourceUrl || ''} onChange={e => setFormData({...formData, sourceUrl: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A]" />
+              </div>
             </div>
-            <div className="space-y-2 md:col-span-2">
+            <div className="space-y-2">
               <label className="block text-sm font-medium text-[#6B6B6B]">Image</label>
               <div className="flex items-center gap-4">
                 <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
@@ -121,16 +127,19 @@ export function ProjectsAdmin() {
         {Array.isArray(projects) && projects.map(project => (
           <div key={project.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#E5E5E5]">
             {project.imageUrl && <img src={project.imageUrl} alt={project.title} className="w-full h-48 object-cover" />}
-            <div className="p-6">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-xl font-serif text-[#4A4A4A]">{project.title}</h3>
-                <div className="flex gap-2">
-                  <button onClick={() => handleEdit(project)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"><Edit2 size={18} /></button>
-                  <button onClick={() => handleDelete(project.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={18} /></button>
-                </div>
+            <div className="p-6 space-y-3">
+              <h3 className="text-xl font-serif text-[#4A4A4A]">{project.title}</h3>
+              <p className="text-[#6B6B6B] text-sm line-clamp-3">{project.description}</p>
+              
+              <div className="flex gap-4 pt-2">
+                {project.demoUrl && <a href={project.demoUrl} target="_blank" rel="noreferrer" className="text-sm font-medium text-[#A3B18A] hover:text-[#8B9973]">Live Demo &rarr;</a>}
+                {project.sourceUrl && <a href={project.sourceUrl} target="_blank" rel="noreferrer" className="text-sm font-medium text-[#A3B18A] hover:text-[#8B9973]">Source Code &rarr;</a>}
               </div>
-              <p className="text-[#6B6B6B] text-sm mb-4 line-clamp-2">{project.description}</p>
-              <a href={project.link} target="_blank" rel="noreferrer" className="text-[#A3B18A] text-sm hover:underline">View Link</a>
+
+              <div className="flex gap-2 justify-end mt-4 pt-4 border-t border-[#E5E5E5]">
+                <button onClick={() => handleEdit(project)} className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"><Edit2 size={18} /></button>
+                <button onClick={() => handleDelete(project.id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={18} /></button>
+              </div>
             </div>
           </div>
         ))}

@@ -10,6 +10,7 @@ export function Home() {
   const [projects, setProjects] = useState<any[]>([]);
   const [blogs, setBlogs] = useState<any[]>([]);
   const [socialLinks, setSocialLinks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch data from backend
@@ -29,10 +30,20 @@ export function Home() {
         setSocialLinks(socialRes.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#FAF9F6]">
+        <div className="animate-pulse w-12 h-12 rounded-full bg-[#A3B18A] opacity-50"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-24 pb-20 px-6 max-w-5xl mx-auto space-y-32">
@@ -50,26 +61,44 @@ export function Home() {
           </a>
         </div>
         <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-sm border-4 border-white">
-          <img 
-            src={profile?.avatar || "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"} 
-            alt="Profile Avatar" 
+          <img
+            src={profile?.avatar || "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"}
+            alt="Profile Avatar"
             className="w-full h-full object-cover"
           />
         </div>
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="space-y-8">
+      <section id="skills" className="space-y-12">
         <h2 className="text-3xl font-serif text-center">My Skills</h2>
-        <div className="flex flex-wrap justify-center gap-4">
-          {Array.isArray(skills) && skills.length > 0 ? skills.map(skill => (
-            <div key={skill.id} className="px-6 py-3 bg-white rounded-full shadow-sm text-[#4A4A4A] border border-[#E5E5E5] hover:border-[#A3B18A] transition-colors">
-              {skill.name}
-            </div>
-          )) : (
-            <p className="text-[#6B6B6B]">Loading skills...</p>
-          )}
-        </div>
+
+        {Array.isArray(skills) && skills.length > 0 ? (
+          <div className="space-y-10">
+            {Object.entries(
+              skills.reduce((acc, skill) => {
+                const cat = skill.category?.name || 'Other';
+                if (!acc[cat]) acc[cat] = [];
+                acc[cat].push(skill);
+                return acc;
+              }, {} as Record<string, any[]>)
+            ).map(([cat, catSkills]) => (
+              <div key={cat} className="space-y-4">
+                <h3 className="text-xl font-medium text-[#4A4A4A] text-center md:text-left">{cat}</h3>
+                <div className="flex flex-wrap justify-center md:justify-start gap-4">
+                  {(catSkills as any[]).map(skill => (
+                    <div key={skill.id} className="flex items-center gap-2 px-5 py-2.5 bg-white rounded-xl shadow-sm text-[#4A4A4A] border border-[#E5E5E5] hover:border-[#A3B18A] hover:shadow-md transition-all group cursor-default">
+                      {skill.iconUrl && <img src={skill.iconUrl} alt={skill.name} className="w-5 h-5 object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" />}
+                      <span className="font-medium">{skill.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-[#6B6B6B] text-center">No skills added yet.</p>
+        )}
       </section>
 
       {/* Projects Section */}
@@ -77,17 +106,31 @@ export function Home() {
         <h2 className="text-3xl font-serif text-center">Featured Projects</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {Array.isArray(projects) && projects.length > 0 ? projects.map(project => (
-            <a key={project.id} href={project.link} target="_blank" rel="noreferrer" className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-[#E5E5E5]">
+            <div key={project.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-[#E5E5E5] flex flex-col">
               {project.imageUrl && (
                 <div className="h-48 overflow-hidden">
                   <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
               )}
-              <div className="p-6 space-y-3">
-                <h3 className="text-xl font-serif">{project.title}</h3>
-                <p className="text-[#6B6B6B]">{project.description}</p>
+              <div className="p-6 space-y-4 flex-1 flex flex-col">
+                <div>
+                  <h3 className="text-xl font-serif">{project.title}</h3>
+                  <p className="text-[#6B6B6B] mt-2">{project.description}</p>
+                </div>
+                <div className="mt-auto pt-4 flex gap-4">
+                  {project.demoUrl && (
+                    <a href={project.demoUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm font-medium text-[#A3B18A] hover:text-[#8A9A73] transition-colors">
+                      🌐 Live Demo <span className="text-lg leading-none">&rarr;</span>
+                    </a>
+                  )}
+                  {project.sourceUrl && (
+                    <a href={project.sourceUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm font-medium text-[#A3B18A] hover:text-[#8A9A73] transition-colors">
+                      💻 Source Code <span className="text-lg leading-none">&rarr;</span>
+                    </a>
+                  )}
+                </div>
               </div>
-            </a>
+            </div>
           )) : (
             <p className="text-[#6B6B6B] text-center w-full">Loading projects...</p>
           )}
@@ -108,7 +151,7 @@ export function Home() {
           )}
         </div>
       </section>
-      
+
       {/* Footer / Contact */}
       <footer id="contact" className="text-center pt-10 pb-6 border-t border-[#E5E5E5]">
         <h2 className="text-2xl font-serif mb-6">Let's Connect</h2>
@@ -122,7 +165,7 @@ export function Home() {
             <p className="text-[#888888]">No contact info available.</p>
           )}
         </div>
-        <p className="text-sm text-[#888888] mt-10">© {new Date().getFullYear()} MyPortfolio. Designed with simplicity.</p>
+        <p className="text-sm text-[#888888] mt-10">© {new Date().getFullYear()} Sang Tran. Software Developer • Flutter Developer.</p>
       </footer>
     </div>
   );

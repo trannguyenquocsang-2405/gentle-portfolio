@@ -10,7 +10,7 @@ export class SkillService {
   }
 
   findAll() {
-    return this.prisma.skill.findMany();
+    return this.prisma.skill.findMany({ include: { category: true } });
   }
 
   remove(id: number) {
