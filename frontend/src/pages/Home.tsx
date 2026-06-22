@@ -113,11 +113,11 @@ export function Home() {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="space-y-12 scroll-mt-28">
+      <section id="skills" className="space-y-10 scroll-mt-28">
         <h2 className="text-3xl font-serif text-center">My Skills</h2>
 
         {Array.isArray(skills) && skills.length > 0 ? (
-          <div className="space-y-10">
+          <div className="bg-white rounded-2xl shadow-sm border border-[#E5E5E5] overflow-hidden">
             {Object.entries(
               skills.reduce((acc, skill) => {
                 const cat = skill.category?.name || 'Other';
@@ -126,13 +126,15 @@ export function Home() {
                 return acc;
               }, {} as Record<string, any[]>)
             ).map(([cat, catSkills]) => (
-              <div key={cat} className="space-y-4">
-                <h3 className="text-xl font-medium text-[#4A4A4A] text-center md:text-left">{cat}</h3>
-                <div className="flex flex-wrap justify-center md:justify-start gap-4">
+              <div key={cat} className="flex flex-col md:flex-row border-b border-[#E5E5E5] last:border-b-0">
+                <div className="md:w-1/3 bg-gray-50/50 p-6 flex items-center md:border-r border-[#E5E5E5]">
+                  <h3 className="text-lg font-semibold text-[#4A4A4A]">{cat}</h3>
+                </div>
+                <div className="md:w-2/3 p-6 flex flex-wrap gap-3">
                   {(catSkills as any[]).map((skill: any) => (
-                    <div key={skill.id} className="flex items-center gap-2 px-5 py-2.5 bg-white rounded-xl shadow-sm text-[#4A4A4A] border border-[#E5E5E5] hover:border-[#A3B18A] hover:shadow-md transition-all group cursor-default">
-                      {skill.iconUrl && <img src={skill.iconUrl} alt={skill.name} className="w-5 h-5 object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" />}
-                      <span className="font-medium">{skill.name}</span>
+                    <div key={skill.id} className="flex items-center gap-2 px-4 py-2 bg-[#FAF9F6] rounded-lg border border-[#E5E5E5] hover:border-[#A3B18A] hover:bg-white hover:shadow-md transition-all group cursor-default">
+                      {skill.iconUrl && <img src={skill.iconUrl} alt={skill.name} className="w-5 h-5 object-contain group-hover:scale-110 transition-transform" />}
+                      <span className="font-medium text-sm">{skill.name}</span>
                     </div>
                   ))}
                 </div>
@@ -200,9 +202,9 @@ export function Home() {
         <h2 className="text-2xl font-serif mb-6">Let's Connect</h2>
         <div className="flex justify-center flex-wrap gap-6">
           {Array.isArray(socialLinks) && socialLinks.length > 0 ? socialLinks.map(link => (
-            <a key={link.id} href={getSmartUrl(link.platform, link.url)} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[#4A4A4A] hover:text-[#A3B18A] transition-colors group">
-              {link.iconUrl && <img src={link.iconUrl} alt={link.platform} className="w-6 h-6 object-contain grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all" />}
-              <span>{getDisplayText(link.platform, link.url)}</span>
+            <a key={link.id} href={getSmartUrl(link.platform, link.url)} target="_blank" rel="noreferrer" className="px-5 py-3 bg-white rounded-xl shadow-sm border border-[#E5E5E5] flex items-center gap-3 text-[#4A4A4A] hover:border-[#A3B18A] hover:shadow-md hover:text-[#A3B18A] transition-all group">
+              {link.iconUrl && <img src={link.iconUrl} alt={link.platform} className="w-6 h-6 object-contain group-hover:scale-110 transition-transform" />}
+              <span className="font-medium">{getDisplayText(link.platform, link.url)}</span>
             </a>
           )) : (
             <p className="text-[#888888]">No contact info available.</p>
