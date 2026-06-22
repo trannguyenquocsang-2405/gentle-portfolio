@@ -38,7 +38,7 @@ export function ProfileAdmin() {
       const res = await axios.post(`${API_URL}/upload`, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      setProfile({ ...profile, avatarUrl: res.data.url });
+      setProfile({ ...profile, avatar: res.data.url });
     } catch (error) {
       alert('Upload failed');
     }
@@ -87,13 +87,13 @@ export function ProfileAdmin() {
             </button>
             <input
               type="text"
-              value={profile.avatarUrl || ''}
-              onChange={e => setProfile({...profile, avatarUrl: e.target.value})}
+              value={profile.avatar || ''}
+              onChange={e => setProfile({...profile, avatar: e.target.value})}
               placeholder="Or paste image URL"
               className="w-full px-4 py-3 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] transition-colors"
             />
           </div>
-          {profile.avatarUrl && <img src={profile.avatarUrl} alt="Avatar Preview" className="h-24 w-24 object-cover rounded-full mt-4 border border-[#E5E5E5]" />}
+          {profile.avatar && <img src={profile.avatar} alt="Avatar Preview" className="h-24 w-24 object-cover rounded-full mt-4 border border-[#E5E5E5]" />}
         </div>
         <div className="flex justify-end">
           <button
