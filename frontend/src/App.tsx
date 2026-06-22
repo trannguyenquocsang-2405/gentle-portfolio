@@ -26,7 +26,7 @@ function Navbar() {
     <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#FAF9F6]/90 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
       <div className="max-w-5xl mx-auto px-6 flex justify-between items-center">
         <Link to="/" className="text-2xl font-serif tracking-wide text-[#4A4A4A]">
-          MyPortfolio
+          Tran Nguyen Quoc Sang
         </Link>
         <div className="hidden md:flex gap-8 text-[#4A4A4A] font-medium">
           <a href="/#about" className="hover:text-[#A3B18A] transition-colors">About</a>
@@ -47,7 +47,7 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<><Navbar /><Home /></>} />
           <Route path="/blog/:id" element={<><Navbar /><BlogDetail /></>} />
-          
+
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />}>
