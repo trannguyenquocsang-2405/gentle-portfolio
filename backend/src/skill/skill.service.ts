@@ -1,26 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSkillDto } from './dto/create-skill.dto';
-import { UpdateSkillDto } from './dto/update-skill.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class SkillService {
-  create(createSkillDto: CreateSkillDto) {
-    return 'This action adds a new skill';
+  constructor(private prisma: PrismaService) {}
+
+  create(createSkillDto: any) {
+    return this.prisma.skill.create({ data: createSkillDto });
   }
 
   findAll() {
-    return `This action returns all skill`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} skill`;
-  }
-
-  update(id: number, updateSkillDto: UpdateSkillDto) {
-    return `This action updates a #${id} skill`;
+    return this.prisma.skill.findMany();
   }
 
   remove(id: number) {
-    return `This action removes a #${id} skill`;
+    return this.prisma.skill.delete({ where: { id } });
   }
 }

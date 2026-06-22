@@ -1,26 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSocialLinkDto } from './dto/create-social-link.dto';
-import { UpdateSocialLinkDto } from './dto/update-social-link.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class SocialLinkService {
-  create(createSocialLinkDto: CreateSocialLinkDto) {
-    return 'This action adds a new socialLink';
+  constructor(private prisma: PrismaService) {}
+
+  create(createSocialLinkDto: any) {
+    return this.prisma.socialLink.create({ data: createSocialLinkDto });
   }
 
   findAll() {
-    return `This action returns all socialLink`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} socialLink`;
-  }
-
-  update(id: number, updateSocialLinkDto: UpdateSocialLinkDto) {
-    return `This action updates a #${id} socialLink`;
+    return this.prisma.socialLink.findMany();
   }
 
   remove(id: number) {
-    return `This action removes a #${id} socialLink`;
+    return this.prisma.socialLink.delete({ where: { id } });
   }
 }

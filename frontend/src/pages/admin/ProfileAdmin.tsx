@@ -1,11 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { Image as ImageIcon } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export function ProfileAdmin() {
   const [profile, setProfile] = useState<any>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     axios.get(`${API_URL}/profile`).then(res => setProfile(res.data[0]));
@@ -22,6 +25,24 @@ export function ProfileAdmin() {
       alert('Failed to update profile');
     }
     setSaving(false);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const data = new FormData();
+    data.append('file', file);
+    setUploading(true);
+    try {
+      const res = await axios.post(`${API_URL}/upload`, data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setProfile({ ...profile, avatarUrl: res.data.url });
+    } catch (error) {
+      alert('Upload failed');
+    }
+    setUploading(false);
   };
 
   if (!profile) return <p>Loading...</p>;
@@ -58,13 +79,21 @@ export function ProfileAdmin() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Avatar URL (Optional)</label>
-          <input
-            type="text"
-            value={profile.avatarUrl || ''}
-            onChange={e => setProfile({...profile, avatarUrl: e.target.value})}
-            className="w-full px-4 py-3 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] transition-colors"
-          />
+          <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Avatar Image</label>
+          <div className="flex items-center gap-4">
+            <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
+            <button type="button" onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-4 py-3 bg-[#F5F5F5] text-[#4A4A4A] rounded-xl hover:bg-[#E5E5E5] transition-colors whitespace-nowrap">
+              <ImageIcon size={18} /> {uploading ? 'Uploading...' : 'Upload Image'}
+            </button>
+            <input
+              type="text"
+              value={profile.avatarUrl || ''}
+              onChange={e => setProfile({...profile, avatarUrl: e.target.value})}
+              placeholder="Or paste image URL"
+              className="w-full px-4 py-3 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] transition-colors"
+            />
+          </div>
+          {profile.avatarUrl && <img src={profile.avatarUrl} alt="Avatar Preview" className="h-24 w-24 object-cover rounded-full mt-4 border border-[#E5E5E5]" />}
         </div>
         <div className="flex justify-end">
           <button
