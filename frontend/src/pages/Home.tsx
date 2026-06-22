@@ -4,6 +4,48 @@ import { Link } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+const getSmartUrl = (platform: string, input: string) => {
+  if (!input) return '#';
+  const val = input.trim();
+  const lowerPlatform = platform.toLowerCase();
+  
+  if (lowerPlatform.includes('gmail') || lowerPlatform.includes('mail')) {
+    if (!val.startsWith('mailto:')) return `mailto:${val}`;
+  }
+  if (lowerPlatform.includes('zalo')) {
+    // If it's just a phone number, prefix it with zalo.me
+    if (/^[\d\s\.\-\+]+$/.test(val)) return `https://zalo.me/${val.replace(/[^\d\+]/g, '')}`;
+    if (!val.startsWith('http')) return `https://zalo.me/${val}`;
+  }
+  if (lowerPlatform.includes('phone') || lowerPlatform.includes('call')) {
+    if (!val.startsWith('tel:')) return `tel:${val.replace(/[^\d\+]/g, '')}`;
+  }
+  
+  if (!/^(https?|mailto|tel):/i.test(val)) {
+    return `https://${val}`;
+  }
+  return val;
+};
+
+const getDisplayText = (platform: string, input: string) => {
+  if (!input) return platform;
+  const lowerPlatform = platform.toLowerCase();
+  
+  // Hiển thị cả tên và giá trị đối với Số điện thoại, Zalo, Email
+  if (
+    lowerPlatform.includes('gmail') || 
+    lowerPlatform.includes('mail') || 
+    lowerPlatform.includes('zalo') || 
+    lowerPlatform.includes('phone') || 
+    lowerPlatform.includes('call')
+  ) {
+    return `${platform}: ${input}`;
+  }
+  
+  // Với link web bình thường thì chỉ hiện tên Platform
+  return platform;
+};
+
 export function Home() {
   const [profile, setProfile] = useState<any>(null);
   const [skills, setSkills] = useState<any[]>([]);
@@ -157,9 +199,9 @@ export function Home() {
         <h2 className="text-2xl font-serif mb-6">Let's Connect</h2>
         <div className="flex justify-center flex-wrap gap-6">
           {Array.isArray(socialLinks) && socialLinks.length > 0 ? socialLinks.map(link => (
-            <a key={link.id} href={link.url} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[#4A4A4A] hover:text-[#A3B18A] transition-colors group">
+            <a key={link.id} href={getSmartUrl(link.platform, link.url)} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-[#4A4A4A] hover:text-[#A3B18A] transition-colors group">
               {link.iconUrl && <img src={link.iconUrl} alt={link.platform} className="w-6 h-6 object-contain grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all" />}
-              <span>{link.platform}</span>
+              <span>{getDisplayText(link.platform, link.url)}</span>
             </a>
           )) : (
             <p className="text-[#888888]">No contact info available.</p>
