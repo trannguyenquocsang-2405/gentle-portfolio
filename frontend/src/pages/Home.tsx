@@ -10,7 +10,8 @@ const getSmartUrl = (platform: string, input: string) => {
   const lowerPlatform = platform.toLowerCase();
   
   if (lowerPlatform.includes('gmail') || lowerPlatform.includes('mail')) {
-    if (!val.startsWith('mailto:')) return `mailto:${val}`;
+    const email = val.replace(/^mailto:/i, '');
+    return `https://mail.google.com/mail/?view=cm&fs=1&to=${email}`;
   }
   if (lowerPlatform.includes('zalo')) {
     // If it's just a phone number, prefix it with zalo.me
@@ -90,7 +91,7 @@ export function Home() {
   return (
     <div className="pt-24 pb-20 px-6 max-w-5xl mx-auto space-y-32">
       {/* Hero / About Section */}
-      <section id="about" className="flex flex-col-reverse md:flex-row items-center gap-12 pt-10">
+      <section id="about" className="flex flex-col-reverse md:flex-row items-center gap-12 pt-10 scroll-mt-28">
         <div className="flex-1 space-y-6">
           <h1 className="text-4xl md:text-5xl font-serif text-[#4A4A4A] leading-tight">
             {profile?.greeting || "Hello, I am a Developer."}
@@ -112,7 +113,7 @@ export function Home() {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="space-y-12">
+      <section id="skills" className="space-y-12 scroll-mt-28">
         <h2 className="text-3xl font-serif text-center">My Skills</h2>
 
         {Array.isArray(skills) && skills.length > 0 ? (
@@ -144,7 +145,7 @@ export function Home() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="space-y-8">
+      <section id="projects" className="space-y-8 scroll-mt-28">
         <h2 className="text-3xl font-serif text-center">Featured Projects</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {Array.isArray(projects) && projects.length > 0 ? projects.map(project => (
@@ -180,7 +181,7 @@ export function Home() {
       </section>
 
       {/* Blog Section */}
-      <section id="blog" className="space-y-8">
+      <section id="blog" className="space-y-8 scroll-mt-28">
         <h2 className="text-3xl font-serif text-center">Latest Notes</h2>
         <div className="space-y-6">
           {Array.isArray(blogs) && blogs.length > 0 ? blogs.map(blog => (
@@ -195,7 +196,7 @@ export function Home() {
       </section>
 
       {/* Footer / Contact */}
-      <footer id="contact" className="text-center pt-10 pb-6 border-t border-[#E5E5E5]">
+      <footer id="contact" className="text-center pt-10 pb-6 border-t border-[#E5E5E5] scroll-mt-28">
         <h2 className="text-2xl font-serif mb-6">Let's Connect</h2>
         <div className="flex justify-center flex-wrap gap-6">
           {Array.isArray(socialLinks) && socialLinks.length > 0 ? socialLinks.map(link => (

@@ -13,6 +13,13 @@ export class SocialLinkService {
     return this.prisma.socialLink.findMany();
   }
 
+  update(id: number, updateSocialLinkDto: any) {
+    return this.prisma.socialLink.update({
+      where: { id },
+      data: updateSocialLinkDto,
+    });
+  }
+
   remove(id: number) {
     return this.prisma.socialLink.delete({ where: { id } });
   }

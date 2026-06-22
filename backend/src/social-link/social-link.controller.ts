@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/common';
 import { SocialLinkService } from './social-link.service';
 
 @Controller('social-link')
@@ -13,6 +13,11 @@ export class SocialLinkController {
   @Get()
   findAll() {
     return this.socialLinkService.findAll();
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateSocialLinkDto: any) {
+    return this.socialLinkService.update(+id, updateSocialLinkDto);
   }
 
   @Delete(':id')
