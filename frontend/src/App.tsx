@@ -3,6 +3,11 @@ import { Home } from './pages/Home';
 import { BlogDetail } from './pages/BlogDetail';
 import { AdminLogin } from './pages/admin/AdminLogin';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { ProfileAdmin } from './pages/admin/ProfileAdmin';
+import { SkillsAdmin } from './pages/admin/SkillsAdmin';
+import { ProjectsAdmin } from './pages/admin/ProjectsAdmin';
+import { BlogAdmin } from './pages/admin/BlogAdmin';
+import { BlogEditor } from './pages/admin/BlogEditor';
 import { useEffect, useState } from 'react';
 
 function Navbar() {
@@ -44,7 +49,14 @@ function App() {
           
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/*" element={<AdminDashboard />} />
+          <Route path="/admin" element={<AdminDashboard />}>
+            <Route index element={<ProfileAdmin />} />
+            <Route path="skills" element={<SkillsAdmin />} />
+            <Route path="projects" element={<ProjectsAdmin />} />
+            <Route path="blogs" element={<BlogAdmin />} />
+            <Route path="blogs/new" element={<BlogEditor />} />
+            <Route path="blogs/edit/:id" element={<BlogEditor />} />
+          </Route>
         </Routes>
       </div>
     </BrowserRouter>
