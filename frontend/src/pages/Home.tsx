@@ -59,7 +59,7 @@ export function Home() {
       <section id="skills" className="space-y-8">
         <h2 className="text-3xl font-serif text-center">My Skills</h2>
         <div className="flex flex-wrap justify-center gap-4">
-          {skills.length > 0 ? skills.map(skill => (
+          {Array.isArray(skills) && skills.length > 0 ? skills.map(skill => (
             <div key={skill.id} className="px-6 py-3 bg-white rounded-full shadow-sm text-[#4A4A4A] border border-[#E5E5E5] hover:border-[#A3B18A] transition-colors">
               {skill.name}
             </div>
@@ -73,7 +73,7 @@ export function Home() {
       <section id="projects" className="space-y-8">
         <h2 className="text-3xl font-serif text-center">Featured Projects</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {projects.length > 0 ? projects.map(project => (
+          {Array.isArray(projects) && projects.length > 0 ? projects.map(project => (
             <a key={project.id} href={project.link} target="_blank" rel="noreferrer" className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-[#E5E5E5]">
               {project.imageUrl && (
                 <div className="h-48 overflow-hidden">
@@ -95,7 +95,7 @@ export function Home() {
       <section id="blog" className="space-y-8">
         <h2 className="text-3xl font-serif text-center">Latest Notes</h2>
         <div className="space-y-6">
-          {blogs.length > 0 ? blogs.map(blog => (
+          {Array.isArray(blogs) && blogs.length > 0 ? blogs.map(blog => (
             <Link key={blog.id} to={`/blog/${blog.id}`} className="block bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-[#E5E5E5] group">
               <h3 className="text-xl font-serif group-hover:text-[#A3B18A] transition-colors">{blog.title}</h3>
               <p className="text-sm text-[#888888] mt-2">{new Date(blog.createdAt).toLocaleDateString()}</p>
