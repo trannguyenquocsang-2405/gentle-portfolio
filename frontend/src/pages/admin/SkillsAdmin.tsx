@@ -57,7 +57,7 @@ export function SkillsAdmin() {
       </form>
 
       <div className="flex flex-wrap gap-4">
-        {skills.map(skill => (
+        {Array.isArray(skills) && skills.map(skill => (
           <div key={skill.id} className="flex items-center gap-3 px-5 py-2 bg-[#FAF9F6] rounded-full border border-[#E5E5E5]">
             <span className="text-[#4A4A4A]">{skill.name}</span>
             <button onClick={() => handleDelete(skill.id)} className="text-red-400 hover:text-red-600 transition-colors">
@@ -65,6 +65,7 @@ export function SkillsAdmin() {
             </button>
           </div>
         ))}
+        {!Array.isArray(skills) && <p className="text-red-500">Failed to load skills (Backend returned non-array data).</p>}
       </div>
     </div>
   );

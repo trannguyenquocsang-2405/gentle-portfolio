@@ -117,7 +117,7 @@ export function ProjectsAdmin() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {projects.map(project => (
+        {Array.isArray(projects) && projects.map(project => (
           <div key={project.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#E5E5E5]">
             {project.imageUrl && <img src={project.imageUrl} alt={project.title} className="w-full h-48 object-cover" />}
             <div className="p-6">
@@ -133,6 +133,7 @@ export function ProjectsAdmin() {
             </div>
           </div>
         ))}
+        {!Array.isArray(projects) && <p className="text-red-500 col-span-2">Failed to load projects.</p>}
       </div>
     </div>
   );

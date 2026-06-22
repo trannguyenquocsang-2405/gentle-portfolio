@@ -40,7 +40,7 @@ export function BlogAdmin() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-[#E5E5E5] overflow-hidden">
-        {blogs.map((blog, index) => (
+        {Array.isArray(blogs) && blogs.map((blog, index) => (
           <div key={blog.id} className={`p-6 flex items-center justify-between ${index !== blogs.length - 1 ? 'border-b border-[#E5E5E5]' : ''}`}>
             <div>
               <h3 className="text-xl font-serif text-[#4A4A4A]">{blog.title}</h3>
@@ -52,8 +52,8 @@ export function BlogAdmin() {
             </div>
           </div>
         ))}
-        {blogs.length === 0 && (
-          <div className="p-12 text-center text-[#888888]">No blog posts yet. Click "Write Post" to start.</div>
+        {(!Array.isArray(blogs) || blogs.length === 0) && (
+          <div className="p-12 text-center text-[#888888]">No blog posts yet or failed to load. Click "Write Post" to start.</div>
         )}
       </div>
     </div>
