@@ -196,14 +196,17 @@ export function Home() {
             {Object.entries(
               skills.reduce((acc, skill) => {
                 const cat = skill.category?.name || 'Other';
-                if (!acc[cat]) acc[cat] = [];
-                acc[cat].push(skill);
+                const catKey = typeof cat === 'object' ? JSON.stringify(cat) : cat;
+                if (!acc[catKey]) acc[catKey] = [];
+                acc[catKey].push(skill);
                 return acc;
               }, {} as Record<string, any[]>)
-            ).map(([cat, catSkills]) => (
-              <div key={cat} className="flex flex-col md:flex-row border-b border-[#E5E5E5] dark:border-[#333333] last:border-b-0">
+            ).map(([catStr, catSkills]) => {
+              const catObj = catStr.startsWith('{') ? JSON.parse(catStr) : catStr;
+              return (
+              <div key={catStr} className="flex flex-col md:flex-row border-b border-[#E5E5E5] dark:border-[#333333] last:border-b-0">
                 <div className="md:w-1/3 bg-gray-50/50 dark:bg-[#2A2A2A]/50 p-6 flex items-center md:border-r border-[#E5E5E5] dark:border-[#333333]">
-                  <h3 className="text-lg font-semibold text-[#4A4A4A] dark:text-[#EAEAEA]">{tData(cat)}</h3>
+                  <h3 className="text-lg font-semibold text-[#4A4A4A] dark:text-[#EAEAEA]">{tData(catObj)}</h3>
                 </div>
                 <div className="md:w-2/3 p-6 flex flex-wrap gap-3">
                   {(catSkills as any[]).map((skill: any) => (
@@ -214,7 +217,7 @@ export function Home() {
                   ))}
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         ) : (
           <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-center">{t('skills.empty')}</p>
