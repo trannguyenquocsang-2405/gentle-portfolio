@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { Image as ImageIcon } from 'lucide-react';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { profileService, uploadService } from '../../services/api';
 
 export function ProfileAdmin() {
   const [profile, setProfile] = useState<any>(null);
@@ -11,14 +9,14 @@ export function ProfileAdmin() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    axios.get(`${API_URL}/profile`).then(res => setProfile(res.data[0]));
+    profileService.get().then(res => setProfile(res[0]));
   }, []);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     try {
-      await axios.patch(`${API_URL}/profile/${profile.id}`, profile);
+      await profileService.update(profile.id, profile);
       alert('Profile updated successfully!');
     } catch (error) {
       console.error(error);
@@ -31,14 +29,10 @@ export function ProfileAdmin() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const data = new FormData();
-    data.append('file', file);
     setUploading(true);
     try {
-      const res = await axios.post(`${API_URL}/upload`, data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      setProfile({ ...profile, avatar: res.data.url });
+      const res = await uploadService.uploadImage(file);
+      setProfile({ ...profile, avatar: res.url });
     } catch (error) {
       alert('Upload failed');
     }

@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Trash2, Edit2, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { blogService } from '../../services/api';
 
 export function BlogAdmin() {
   const [blogs, setBlogs] = useState<any[]>([]);
@@ -13,14 +11,19 @@ export function BlogAdmin() {
     fetchBlogs();
   }, []);
 
-  const fetchBlogs = () => {
-    axios.get(`${API_URL}/blog`).then(res => setBlogs(res.data));
+  const fetchBlogs = async () => {
+    try {
+      const data = await blogService.getAll();
+      setBlogs(data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this post?')) return;
     try {
-      await axios.delete(`${API_URL}/blog/${id}`);
+      await blogService.delete(id);
       fetchBlogs();
     } catch (error) {
       alert('Failed to delete blog');

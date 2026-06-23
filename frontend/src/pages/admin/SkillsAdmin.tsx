@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { Trash2, Plus, Image as ImageIcon } from 'lucide-react';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { skillService, skillCategoryService, uploadService } from '../../services/api';
 
 export function SkillsAdmin() {
   const [skills, setSkills] = useState<any[]>([]);
@@ -23,14 +21,14 @@ export function SkillsAdmin() {
 
   const fetchData = async () => {
     try {
-      const [skillsRes, catsRes] = await Promise.all([
-        axios.get(`${API_URL}/skill`),
-        axios.get(`${API_URL}/skill-category`)
+      const [skillsData, catsData] = await Promise.all([
+        skillService.getAll(),
+        skillCategoryService.getAll()
       ]);
-      setSkills(skillsRes.data);
-      setCategories(catsRes.data);
-      if (catsRes.data.length > 0 && !categoryId) {
-        setCategoryId(catsRes.data[0].id.toString());
+      setSkills(skillsData);
+      setCategories(catsData);
+      if (catsData.length > 0 && !categoryId) {
+        setCategoryId(catsData[0].id.toString());
       }
     } catch (e) {
       console.error(e);
@@ -41,7 +39,7 @@ export function SkillsAdmin() {
     e.preventDefault();
     if (!newCategory.trim()) return;
     try {
-      await axios.post(`${API_URL}/skill-category`, { name: newCategory });
+      await skillCategoryService.create({ name: newCategory });
       setNewCategory('');
       fetchData();
     } catch (error) {
@@ -52,7 +50,7 @@ export function SkillsAdmin() {
   const handleDeleteCategory = async (id: number) => {
     if (!confirm('Delete this category? Skills inside it will lose their category.')) return;
     try {
-      await axios.delete(`${API_URL}/skill-category/${id}`);
+      await skillCategoryService.delete(id);
       fetchData();
     } catch (error) {
       alert('Failed to delete category');
@@ -63,14 +61,10 @@ export function SkillsAdmin() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const data = new FormData();
-    data.append('file', file);
     setUploading(true);
     try {
-      const res = await axios.post(`${API_URL}/upload`, data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      setIconUrl(res.data.url);
+      const res = await uploadService.uploadImage(file);
+      setIconUrl(res.url);
     } catch (error) {
       alert('Upload failed');
     }
@@ -81,7 +75,7 @@ export function SkillsAdmin() {
     e.preventDefault();
     if (!newSkill.trim() || !categoryId) return;
     try {
-      await axios.post(`${API_URL}/skill`, { name: newSkill, categoryId: parseInt(categoryId), iconUrl });
+      await skillService.create({ name: newSkill, categoryId: parseInt(categoryId), iconUrl });
       setNewSkill('');
       setIconUrl('');
       fetchData();
@@ -93,7 +87,7 @@ export function SkillsAdmin() {
   const handleDeleteSkill = async (id: number) => {
     if (!confirm('Are you sure you want to delete this skill?')) return;
     try {
-      await axios.delete(`${API_URL}/skill/${id}`);
+      await skillService.delete(id);
       fetchData();
     } catch (error) {
       alert('Failed to delete skill');

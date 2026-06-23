@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Download, ChevronDown, X } from 'lucide-react';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { profileService, skillService, projectService, blogService, socialLinkService, experienceService, resumeService } from '../services/api';
 
 const getSmartUrl = (platform: string, input: string) => {
   if (!input) return '#';
@@ -75,21 +73,21 @@ export function Home() {
     const fetchData = async () => {
       try {
         const [profileRes, skillsRes, projectsRes, blogsRes, socialRes, expRes, resRes] = await Promise.all([
-          axios.get(`${API_URL}/profile`),
-          axios.get(`${API_URL}/skill`),
-          axios.get(`${API_URL}/project`),
-          axios.get(`${API_URL}/blog`),
-          axios.get(`${API_URL}/social-link`),
-          axios.get(`${API_URL}/experience`),
-          axios.get(`${API_URL}/resume`),
+          profileService.get(),
+          skillService.getAll(),
+          projectService.getAll(),
+          blogService.getAll(),
+          socialLinkService.getAll(),
+          experienceService.getAll(),
+          resumeService.getAll(),
         ]);
-        setProfile(profileRes.data[0]);
-        setSkills(skillsRes.data);
-        setProjects(projectsRes.data);
-        setBlogs(blogsRes.data);
-        setSocialLinks(socialRes.data);
-        setExperiences(expRes.data);
-        setResumes(resRes.data);
+        setProfile(profileRes[0]);
+        setSkills(skillsRes);
+        setProjects(projectsRes);
+        setBlogs(blogsRes);
+        setSocialLinks(socialRes);
+        setExperiences(expRes);
+        setResumes(resRes);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {

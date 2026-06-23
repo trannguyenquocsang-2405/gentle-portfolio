@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { authService } from '../../services/api';
 
 export function AdminLogin() {
   const [username, setUsername] = useState('');
@@ -10,8 +8,8 @@ export function AdminLogin() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${API_URL}/auth/login`, { username, password });
-      localStorage.setItem('admin_token', res.data.access_token);
+      const res = await authService.login({ username, password });
+      localStorage.setItem('admin_token', res.access_token);
       window.location.href = '/admin';
     } catch (error) {
       alert("Login failed!");

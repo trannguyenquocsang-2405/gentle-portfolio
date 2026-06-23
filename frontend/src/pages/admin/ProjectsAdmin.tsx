@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { Trash2, Edit2, Plus, Image as ImageIcon } from 'lucide-react';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { projectService, uploadService } from '../../services/api';
 
 export function ProjectsAdmin() {
   const [projects, setProjects] = useState<any[]>([]);
@@ -16,22 +14,23 @@ export function ProjectsAdmin() {
     fetchProjects();
   }, []);
 
-  const fetchProjects = () => {
-    axios.get(`${API_URL}/project`).then(res => setProjects(res.data));
+  const fetchProjects = async () => {
+    try {
+      const data = await projectService.getAll();
+      setProjects(data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const data = new FormData();
-    data.append('file', file);
     setUploading(true);
     try {
-      const res = await axios.post(`${API_URL}/upload`, data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      setFormData({ ...formData, imageUrl: res.data.url });
+      const res = await uploadService.uploadImage(file);
+      setFormData({ ...formData, imageUrl: res.url });
     } catch (error) {
       alert('Upload failed');
     }
@@ -42,10 +41,10 @@ export function ProjectsAdmin() {
     e.preventDefault();
     try {
       if (formData.id) {
-        await axios.patch(`${API_URL}/project/${formData.id}`, formData);
+        await projectService.update(formData.id, formData);
       } else {
         const { id, ...postData } = formData;
-        await axios.post(`${API_URL}/project`, postData);
+        await projectService.create(postData);
       }
       setShowForm(false);
       setFormData({ id: null, title: '', description: '', details: '', imageUrl: '', demoUrl: '', sourceUrl: '' });
@@ -63,7 +62,7 @@ export function ProjectsAdmin() {
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this project?')) return;
     try {
-      await axios.delete(`${API_URL}/project/${id}`);
+      await projectService.delete(id);
       fetchProjects();
     } catch (error) {
       alert('Failed to delete project');

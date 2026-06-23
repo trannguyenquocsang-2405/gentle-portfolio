@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { Trash2, Plus, FileText, Download } from 'lucide-react';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { resumeService, uploadService } from '../../services/api';
 
 export function ResumeAdmin() {
   const [resumes, setResumes] = useState<any[]>([]);
@@ -19,8 +17,8 @@ export function ResumeAdmin() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(`${API_URL}/resume`);
-      setResumes(res.data);
+      const data = await resumeService.getAll();
+      setResumes(data);
     } catch (e) {
       console.error(e);
     }
@@ -35,14 +33,10 @@ export function ResumeAdmin() {
       return;
     }
 
-    const data = new FormData();
-    data.append('file', file);
     setUploading(true);
     try {
-      const res = await axios.post(`${API_URL}/upload`, data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      setFileUrl(res.data.url);
+      const res = await uploadService.uploadImage(file);
+      setFileUrl(res.url);
     } catch (error) {
       alert('Upload failed');
     }
@@ -54,7 +48,7 @@ export function ResumeAdmin() {
     if (!title.trim() || !fileUrl) return;
     
     try {
-      await axios.post(`${API_URL}/resume`, { title, fileUrl });
+      await resumeService.create({ title, fileUrl });
       setTitle('');
       setFileUrl('');
       fetchData();
@@ -66,7 +60,7 @@ export function ResumeAdmin() {
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this resume?')) return;
     try {
-      await axios.delete(`${API_URL}/resume/${id}`);
+      await resumeService.delete(id);
       fetchData();
     } catch (error) {
       alert('Failed to delete resume');

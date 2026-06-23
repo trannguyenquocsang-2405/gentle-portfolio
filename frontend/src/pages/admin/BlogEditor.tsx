@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import MDEditor from '@uiw/react-md-editor';
 import { ArrowLeft, Save } from 'lucide-react';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { blogService, uploadService } from '../../services/api';
 
 export function BlogEditor() {
   const { id } = useParams();
@@ -15,10 +13,10 @@ export function BlogEditor() {
 
   useEffect(() => {
     if (id) {
-      axios.get(`${API_URL}/blog/${id}`).then(res => {
-        setTitle(res.data.title);
-        setContent(res.data.content);
-      });
+      blogService.getById(id).then(data => {
+        setTitle(data.title);
+        setContent(data.content);
+      }).catch(e => console.error(e));
     }
   }, [id]);
 
@@ -31,9 +29,9 @@ export function BlogEditor() {
     try {
       const data = { title, content };
       if (id) {
-        await axios.patch(`${API_URL}/blog/${id}`, data);
+        await blogService.update(id, data);
       } else {
-        await axios.post(`${API_URL}/blog`, data);
+        await blogService.create(data);
       }
       navigate('/admin/blogs');
     } catch (error) {
@@ -46,14 +44,10 @@ export function BlogEditor() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append('file', file);
     try {
-      const res = await axios.post(`${API_URL}/upload`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await uploadService.uploadImage(file);
       // Insert image markdown at cursor position or end
-      const imageMarkdown = `\n![Image](${res.data.url})\n`;
+      const imageMarkdown = `\n![Image](${res.url})\n`;
       setContent(prev => (prev || '') + imageMarkdown);
     } catch (error) {
       alert('Upload failed');

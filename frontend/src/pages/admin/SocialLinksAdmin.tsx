@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { Trash2, Plus, Edit2, Image as ImageIcon } from 'lucide-react';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { socialLinkService, uploadService } from '../../services/api';
 
 export function SocialLinksAdmin() {
   const [links, setLinks] = useState<any[]>([]);
@@ -15,8 +13,13 @@ export function SocialLinksAdmin() {
     fetchLinks();
   }, []);
 
-  const fetchLinks = () => {
-    axios.get(`${API_URL}/social-link`).then(res => setLinks(res.data));
+  const fetchLinks = async () => {
+    try {
+      const data = await socialLinkService.getAll();
+      setLinks(data);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,10 +27,10 @@ export function SocialLinksAdmin() {
     if (!formData.platform || !formData.url) return;
     try {
       if (formData.id) {
-        await axios.patch(`${API_URL}/social-link/${formData.id}`, formData);
+        await socialLinkService.update(formData.id, formData);
       } else {
         const { id, ...postData } = formData;
-        await axios.post(`${API_URL}/social-link`, postData);
+        await socialLinkService.create(postData);
       }
       setFormData({ id: null, platform: '', url: '', iconUrl: '' });
       setShowForm(false);
@@ -41,14 +44,10 @@ export function SocialLinksAdmin() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const data = new FormData();
-    data.append('file', file);
     setUploading(true);
     try {
-      const res = await axios.post(`${API_URL}/upload`, data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      setFormData({ ...formData, iconUrl: res.data.url });
+      const res = await uploadService.uploadImage(file);
+      setFormData({ ...formData, iconUrl: res.url });
     } catch (error) {
       alert('Upload failed');
     }
@@ -63,7 +62,7 @@ export function SocialLinksAdmin() {
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this link?')) return;
     try {
-      await axios.delete(`${API_URL}/social-link/${id}`);
+      await socialLinkService.delete(id);
       fetchLinks();
     } catch (error) {
       alert('Failed to delete link');

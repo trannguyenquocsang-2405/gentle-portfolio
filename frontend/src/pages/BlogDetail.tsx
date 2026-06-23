@@ -1,13 +1,11 @@
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import { blogService } from '../services/api';
 
 interface Blog {
   id: string;
@@ -23,8 +21,7 @@ export function BlogDetail() {
   const { data: blog, isLoading, isError, error } = useQuery<Blog>({
     queryKey: ['blog', id],
     queryFn: async () => {
-      const res = await axios.get(`${API_URL}/blog/${id}`);
-      return res.data;
+      return await blogService.getById(id as string);
     },
     enabled: !!id,
   });
