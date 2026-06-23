@@ -178,7 +178,7 @@ export function Home() {
 
         {Array.isArray(experiences) && experiences.length > 0 ? (
           <div className="relative border-l border-[#E5E5E5] dark:border-[#333333] ml-4 md:ml-8 space-y-12">
-            {experiences.map((exp, index) => (
+            {experiences.map((exp) => (
               <div key={exp.id} className="relative pl-8 md:pl-12">
                 {/* Timeline dot */}
                 <div className="absolute -left-2 top-1.5 w-4 h-4 bg-[#A3B18A] rounded-full ring-4 ring-[#FAF9F6] dark:ring-[#121212]"></div>
