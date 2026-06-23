@@ -30,7 +30,15 @@ export function BlogDetail() {
   });
 
   if (isLoading) {
-    return <div className="pt-32 text-center text-[#6B6B6B] dark:text-[#B0B0B0] animate-pulse">Loading...</div>;
+    return (
+      <div className="pt-32 pb-32 text-center flex flex-col items-center justify-center space-y-4 px-6">
+        <div className="animate-pulse w-10 h-10 rounded-full bg-[#A3B18A] opacity-50"></div>
+        <div className="text-[#6B6B6B] dark:text-[#B0B0B0] animate-pulse">Loading...</div>
+        <p className="text-[#888888] dark:text-[#666666] text-sm animate-pulse">
+          Backend may take 30-60s to wake up on first request...
+        </p>
+      </div>
+    );
   }
 
   if (isError || !blog) {

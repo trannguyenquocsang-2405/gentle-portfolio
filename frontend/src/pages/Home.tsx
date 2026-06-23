@@ -85,8 +85,11 @@ export function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAF9F6] dark:bg-[#121212]">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAF9F6] dark:bg-[#121212] px-6 text-center space-y-4">
         <div className="animate-pulse w-12 h-12 rounded-full bg-[#A3B18A] opacity-50"></div>
+        <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-sm animate-pulse">
+          Backend may take 30-60s to wake up on first request...
+        </p>
       </div>
     );
   }
@@ -159,7 +162,7 @@ export function Home() {
                 <div className="md:w-2/3 p-6 flex flex-wrap gap-3">
                   {(catSkills as any[]).map((skill: any) => (
                     <div key={skill.id} className="flex items-center gap-2 px-4 py-2 bg-[#FAF9F6] dark:bg-[#121212] rounded-lg border border-[#E5E5E5] dark:border-[#333333] hover:border-[#A3B18A] dark:hover:border-[#A3B18A] hover:bg-white dark:hover:bg-[#2A2A2A] hover:shadow-md transition-all group cursor-default">
-                      {skill.iconUrl && <img src={skill.iconUrl} alt={skill.name} className="w-5 h-5 object-contain group-hover:scale-110 transition-transform dark:brightness-200 dark:invert" style={{ filter: skill.iconUrl.includes('svg') ? 'none' : 'auto' }} />}
+                      {skill.iconUrl && <img src={skill.iconUrl} alt={skill.name} className="w-5 h-5 object-contain group-hover:scale-110 transition-transform" />}
                       <span className="font-medium text-sm">{skill.name}</span>
                     </div>
                   ))}
