@@ -13,6 +13,7 @@ export function ExperienceAdmin() {
   const [endDate, setEndDate] = useState('');
   const [isCurrent, setIsCurrent] = useState(false);
   const [description, setDescription] = useState('');
+  const [productUrl, setProductUrl] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -38,7 +39,8 @@ export function ExperienceAdmin() {
         startDate: new Date(`${startDate}-01`).toISOString(),
         endDate: isCurrent || !endDate ? null : new Date(`${endDate}-01`).toISOString(),
         isCurrent,
-        description
+        description,
+        productUrl
       };
       
       await axios.post(`${API_URL}/experience`, payload);
@@ -50,6 +52,7 @@ export function ExperienceAdmin() {
       setEndDate('');
       setIsCurrent(false);
       setDescription('');
+      setProductUrl('');
       fetchData();
     } catch (error) {
       alert('Failed to add experience');
@@ -139,6 +142,14 @@ export function ExperienceAdmin() {
             className="w-full px-4 py-3 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] resize-y"
           />
 
+          <input
+            type="url"
+            value={productUrl}
+            onChange={e => setProductUrl(e.target.value)}
+            placeholder="Product URL / Demo URL (optional)..."
+            className="w-full px-4 py-3 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A]"
+          />
+
           <button type="submit" className="flex items-center justify-center gap-2 w-full py-3 bg-[#A3B18A] text-white rounded-xl hover:bg-[#8B9973] transition-colors">
             <Plus size={20} /> Add Experience
           </button>
@@ -154,6 +165,11 @@ export function ExperienceAdmin() {
                   {formatMonthYear(exp.startDate)} - {exp.isCurrent ? 'Present' : (exp.endDate ? formatMonthYear(exp.endDate) : 'Present')}
                 </p>
                 {exp.description && <p className="text-[#6B6B6B] mt-3 whitespace-pre-wrap">{exp.description}</p>}
+                {exp.productUrl && (
+                  <a href={exp.productUrl} target="_blank" rel="noreferrer" className="inline-block mt-3 text-sm text-[#A3B18A] hover:underline">
+                    🌐 Demo/Product Link
+                  </a>
+                )}
               </div>
               <button onClick={() => handleDelete(exp.id)} className="text-red-400 hover:text-red-600 transition-colors shrink-0 p-2">
                 <Trash2 size={20} />

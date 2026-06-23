@@ -6,7 +6,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export function ProjectsAdmin() {
   const [projects, setProjects] = useState<any[]>([]);
-  const [formData, setFormData] = useState({ id: null, title: '', description: '', imageUrl: '', demoUrl: '', sourceUrl: '' });
+  const [formData, setFormData] = useState({ id: null, title: '', description: '', details: '', imageUrl: '', demoUrl: '', sourceUrl: '' });
   const [showForm, setShowForm] = useState(false);
   const [uploading, setUploading] = useState(false);
   
@@ -48,7 +48,7 @@ export function ProjectsAdmin() {
         await axios.post(`${API_URL}/project`, postData);
       }
       setShowForm(false);
-      setFormData({ id: null, title: '', description: '', imageUrl: '', demoUrl: '', sourceUrl: '' });
+      setFormData({ id: null, title: '', description: '', details: '', imageUrl: '', demoUrl: '', sourceUrl: '' });
       fetchProjects();
     } catch (error) {
       alert('Failed to save project');
@@ -75,7 +75,7 @@ export function ProjectsAdmin() {
       <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-[#E5E5E5]">
         <h2 className="text-2xl font-serif text-[#4A4A4A]">Manage Projects</h2>
         <button 
-          onClick={() => { setShowForm(!showForm); setFormData({ id: null, title: '', description: '', imageUrl: '', demoUrl: '', sourceUrl: '' }); }}
+          onClick={() => { setShowForm(!showForm); setFormData({ id: null, title: '', description: '', details: '', imageUrl: '', demoUrl: '', sourceUrl: '' }); }}
           className="flex items-center gap-2 px-6 py-2 bg-[#A3B18A] text-white rounded-xl hover:bg-[#8B9973] transition-colors"
         >
           <Plus size={20} /> {showForm ? 'Cancel' : 'Add Project'}
@@ -90,8 +90,12 @@ export function ProjectsAdmin() {
               <input type="text" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A]" />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Description</label>
-              <textarea required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] min-h-[100px]" />
+              <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Short Description</label>
+              <textarea required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] min-h-[80px]" />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Detailed Work Description (Optional)</label>
+              <textarea value={formData.details || ''} onChange={e => setFormData({...formData, details: e.target.value})} placeholder="What did you do in this project? Technologies used, problems solved..." className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] min-h-[150px] whitespace-pre-wrap" />
             </div>
             <div className="flex flex-wrap md:flex-nowrap gap-4">
               <div className="w-full md:w-1/2">

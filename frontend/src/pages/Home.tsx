@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { Download, ChevronDown, X } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -54,7 +55,20 @@ export function Home() {
   const [blogs, setBlogs] = useState<any[]>([]);
   const [socialLinks, setSocialLinks] = useState<any[]>([]);
   const [experiences, setExperiences] = useState<any[]>([]);
+  const [resumes, setResumes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCVDropdown, setShowCVDropdown] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<any | null>(null);
+
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    if (selectedProject) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [selectedProject]);
 
   useEffect(() => {
     // Fetch data from backend
@@ -67,6 +81,7 @@ export function Home() {
           axios.get(`${API_URL}/blog`),
           axios.get(`${API_URL}/social-link`),
           axios.get(`${API_URL}/experience`),
+          axios.get(`${API_URL}/resume`),
         ]);
         setProfile(profileRes.data[0]);
         setSkills(skillsRes.data);
@@ -74,6 +89,7 @@ export function Home() {
         setBlogs(blogsRes.data);
         setSocialLinks(socialRes.data);
         setExperiences(expRes.data);
+        setResumes(resRes.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -128,9 +144,37 @@ export function Home() {
           <p className="text-lg text-[#6B6B6B] dark:text-[#B0B0B0] leading-relaxed">
             {profile?.about || "I craft digital experiences with a focus on simplicity and elegance."}
           </p>
-          <a href="#contact" className="inline-block mt-4 px-8 py-3 bg-[#A3B18A] text-white dark:text-[#121212] font-medium rounded-full hover:bg-[#8A9A73] transition-colors shadow-sm">
-            Get in touch
-          </a>
+          <div className="flex flex-wrap items-center gap-4 mt-4">
+            <a href="#contact" className="inline-block px-8 py-3 bg-[#A3B18A] text-white font-medium rounded-full hover:bg-[#8B9973] transition-colors shadow-sm">
+              Get in touch
+            </a>
+            
+            {/* Download CV */}
+            {resumes.length > 0 && (
+              <div className="relative" onMouseEnter={() => setShowCVDropdown(true)} onMouseLeave={() => setShowCVDropdown(false)}>
+                {resumes.length === 1 ? (
+                  <a href={resumes[0].fileUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-8 py-3 border-2 border-[#A3B18A] text-[#A3B18A] dark:text-[#EAEAEA] font-medium rounded-full hover:bg-[#A3B18A] hover:text-white dark:hover:text-[#121212] transition-colors shadow-sm">
+                    <Download size={20} /> Download CV
+                  </a>
+                ) : (
+                  <>
+                    <button className="flex items-center gap-2 px-8 py-3 border-2 border-[#A3B18A] text-[#A3B18A] dark:text-[#EAEAEA] font-medium rounded-full hover:bg-[#A3B18A] hover:text-white dark:hover:text-[#121212] transition-colors shadow-sm">
+                      <Download size={20} /> Download CV <ChevronDown size={18} />
+                    </button>
+                    {showCVDropdown && (
+                      <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-[#1E1E1E] rounded-xl shadow-lg border border-[#E5E5E5] dark:border-[#333333] overflow-hidden flex flex-col py-2 z-50">
+                        {resumes.map(cv => (
+                          <a key={cv.id} href={cv.fileUrl} target="_blank" rel="noreferrer" className="px-4 py-3 hover:bg-[#F5F5F5] dark:hover:bg-[#2A2A2A] transition-colors text-sm text-[#4A4A4A] dark:text-[#EAEAEA] border-b border-[#E5E5E5] dark:border-[#333333] last:border-b-0 text-left">
+                            {cv.title}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
         <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden shadow-sm border-4 border-white">
           <img
@@ -204,6 +248,11 @@ export function Home() {
                       {exp.description}
                     </p>
                   )}
+                  {exp.productUrl && (
+                    <a href={exp.productUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 mt-4 text-sm font-medium text-[#A3B18A] hover:text-[#8A9A73] transition-colors">
+                      🌐 Product / Demo <span className="text-lg leading-none">&rarr;</span>
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -218,7 +267,11 @@ export function Home() {
         <h2 className="text-3xl font-serif text-center">Featured Projects</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {Array.isArray(projects) && projects.length > 0 ? projects.map(project => (
-            <div key={project.id} className="group bg-white dark:bg-[#1E1E1E] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-[#E5E5E5] dark:border-[#333333] flex flex-col">
+            <div 
+              key={project.id} 
+              onClick={() => setSelectedProject(project)}
+              className="group bg-white dark:bg-[#1E1E1E] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-[#E5E5E5] dark:border-[#333333] flex flex-col cursor-pointer hover:-translate-y-1"
+            >
               {project.imageUrl && (
                 <div className="h-48 overflow-hidden">
                   <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -229,7 +282,7 @@ export function Home() {
                   <h3 className="text-xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA]">{project.title}</h3>
                   <p className="text-[#6B6B6B] dark:text-[#B0B0B0] mt-2">{project.description}</p>
                 </div>
-                <div className="mt-auto pt-4 flex gap-4">
+                <div className="mt-auto pt-4 flex gap-4" onClick={(e) => e.stopPropagation()}>
                   {project.demoUrl && (
                     <a href={project.demoUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm font-medium text-[#A3B18A] hover:text-[#8A9A73] transition-colors">
                       🌐 Live Demo <span className="text-lg leading-none">&rarr;</span>
@@ -251,8 +304,8 @@ export function Home() {
 
       {/* Blog Section */}
       <section id="blog" className="space-y-8 scroll-mt-28">
-        <h2 className="text-3xl font-serif text-center">Latest Notes</h2>
-        <div className="space-y-6">
+        <h2 className="text-3xl font-serif text-center"> Blog </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.isArray(blogs) && blogs.length > 0 ? blogs.map(blog => (
             <Link key={blog.id} to={`/blog/${blog.id}`} className="block bg-white dark:bg-[#1E1E1E] p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-[#E5E5E5] dark:border-[#333333] group">
               <h3 className="text-xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA] group-hover:text-[#A3B18A] dark:group-hover:text-[#A3B18A] transition-colors">{blog.title}</h3>
@@ -279,6 +332,80 @@ export function Home() {
         </div>
         <p className="text-sm text-[#888888] dark:text-[#666666] mt-10">© {new Date().getFullYear()} Sang Tran. Software Developer • Flutter Developer.</p>
       </footer>
+
+      {/* Project Details Modal */}
+      {selectedProject && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" onClick={() => setSelectedProject(null)}>
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" />
+          
+          {/* Modal Content */}
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="relative bg-white dark:bg-[#1E1E1E] w-full max-w-3xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+          >
+            {/* Close Button */}
+            <button 
+              onClick={() => setSelectedProject(null)}
+              className="absolute top-4 right-4 z-10 p-2 bg-black/20 hover:bg-black/40 text-white rounded-full backdrop-blur-md transition-colors"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="overflow-y-auto no-scrollbar flex-1">
+              {selectedProject.imageUrl && (
+                <div className="w-full h-64 sm:h-80 relative shrink-0">
+                  <img src={selectedProject.imageUrl} alt={selectedProject.title} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <h2 className="absolute bottom-6 left-6 right-6 text-3xl sm:text-4xl font-serif text-white font-bold tracking-wide">
+                    {selectedProject.title}
+                  </h2>
+                </div>
+              )}
+              
+              <div className="p-6 sm:p-8 space-y-8">
+                {!selectedProject.imageUrl && (
+                  <h2 className="text-3xl sm:text-4xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA] font-bold tracking-wide">
+                    {selectedProject.title}
+                  </h2>
+                )}
+                
+                <div className="space-y-4">
+                  <h3 className="text-xl font-medium text-[#4A4A4A] dark:text-[#EAEAEA]">Overview</h3>
+                  <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-lg leading-relaxed">
+                    {selectedProject.description}
+                  </p>
+                </div>
+
+                {selectedProject.details && (
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-medium text-[#4A4A4A] dark:text-[#EAEAEA]">What I Did</h3>
+                    <p className="text-[#6B6B6B] dark:text-[#B0B0B0] whitespace-pre-wrap leading-relaxed">
+                      {selectedProject.details}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Sticky Footer for Links */}
+            {(selectedProject.demoUrl || selectedProject.sourceUrl) && (
+              <div className="p-6 bg-[#FAF9F6] dark:bg-[#121212] border-t border-[#E5E5E5] dark:border-[#333333] shrink-0 flex flex-wrap gap-4">
+                {selectedProject.demoUrl && (
+                  <a href={selectedProject.demoUrl} target="_blank" rel="noreferrer" className="flex-1 min-w-[140px] text-center px-6 py-3 bg-[#A3B18A] text-white font-medium rounded-xl hover:bg-[#8B9973] transition-colors shadow-sm">
+                    🌐 Live Demo
+                  </a>
+                )}
+                {selectedProject.sourceUrl && (
+                  <a href={selectedProject.sourceUrl} target="_blank" rel="noreferrer" className="flex-1 min-w-[140px] text-center px-6 py-3 border-2 border-[#A3B18A] text-[#A3B18A] dark:text-[#EAEAEA] font-medium rounded-xl hover:bg-[#A3B18A] hover:text-white dark:hover:text-[#121212] transition-colors">
+                    💻 Source Code
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
