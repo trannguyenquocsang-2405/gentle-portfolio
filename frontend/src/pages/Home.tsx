@@ -148,7 +148,7 @@ export function Home() {
             <a href="#contact" className="inline-block px-8 py-3 bg-[#A3B18A] text-white font-medium rounded-full hover:bg-[#8B9973] transition-colors shadow-sm">
               Get in touch
             </a>
-            
+
             {/* Download CV */}
             {resumes.length > 0 && (
               <div className="relative" onMouseEnter={() => setShowCVDropdown(true)} onMouseLeave={() => setShowCVDropdown(false)}>
@@ -269,8 +269,8 @@ export function Home() {
         <h2 className="text-3xl font-serif text-center">Featured Projects</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {Array.isArray(projects) && projects.length > 0 ? projects.map(project => (
-            <div 
-              key={project.id} 
+            <div
+              key={project.id}
               onClick={() => setSelectedProject(project)}
               className="group bg-white dark:bg-[#1E1E1E] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all border border-[#E5E5E5] dark:border-[#333333] flex flex-col cursor-pointer hover:-translate-y-1"
             >
@@ -340,14 +340,14 @@ export function Home() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" onClick={() => setSelectedProject(null)}>
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" />
-          
+
           {/* Modal Content */}
-          <div 
+          <div
             onClick={(e) => e.stopPropagation()}
             className="relative bg-white dark:bg-[#1E1E1E] w-full max-w-3xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200"
           >
             {/* Close Button */}
-            <button 
+            <button
               onClick={() => setSelectedProject(null)}
               className="absolute top-4 right-4 z-10 p-2 bg-black/20 hover:bg-black/40 text-white rounded-full backdrop-blur-md transition-colors"
             >
@@ -364,14 +364,14 @@ export function Home() {
                   </h2>
                 </div>
               )}
-              
+
               <div className="p-6 sm:p-8 space-y-8">
                 {!selectedProject.imageUrl && (
                   <h2 className="text-3xl sm:text-4xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA] font-bold tracking-wide">
                     {selectedProject.title}
                   </h2>
                 )}
-                
+
                 <div className="space-y-4">
                   <h3 className="text-xl font-medium text-[#4A4A4A] dark:text-[#EAEAEA]">Overview</h3>
                   <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-lg leading-relaxed">
