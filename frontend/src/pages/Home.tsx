@@ -153,7 +153,7 @@ export function Home() {
             {resumes.length > 0 && (
               <div className="relative" onMouseEnter={() => setShowCVDropdown(true)} onMouseLeave={() => setShowCVDropdown(false)}>
                 {resumes.length === 1 ? (
-                  <a href={resumes[0].fileUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-8 py-3 border-2 border-[#A3B18A] text-[#A3B18A] dark:text-[#EAEAEA] font-medium rounded-full hover:bg-[#A3B18A] hover:text-white dark:hover:text-[#121212] transition-colors shadow-sm">
+                  <a href={resumes[0].fileUrl.replace('/upload/', '/upload/fl_attachment/')} download target="_blank" rel="noreferrer" className="flex items-center gap-2 px-8 py-3 border-2 border-[#A3B18A] text-[#A3B18A] dark:text-[#EAEAEA] font-medium rounded-full hover:bg-[#A3B18A] hover:text-white dark:hover:text-[#121212] transition-colors shadow-sm">
                     <Download size={20} /> Download CV
                   </a>
                 ) : (
@@ -162,12 +162,14 @@ export function Home() {
                       <Download size={20} /> Download CV <ChevronDown size={18} />
                     </button>
                     {showCVDropdown && (
-                      <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-[#1E1E1E] rounded-xl shadow-lg border border-[#E5E5E5] dark:border-[#333333] overflow-hidden flex flex-col py-2 z-50">
-                        {resumes.map(cv => (
-                          <a key={cv.id} href={cv.fileUrl} target="_blank" rel="noreferrer" className="px-4 py-3 hover:bg-[#F5F5F5] dark:hover:bg-[#2A2A2A] transition-colors text-sm text-[#4A4A4A] dark:text-[#EAEAEA] border-b border-[#E5E5E5] dark:border-[#333333] last:border-b-0 text-left">
-                            {cv.title}
-                          </a>
-                        ))}
+                      <div className="absolute top-full left-0 pt-2 z-50">
+                        <div className="w-56 bg-white dark:bg-[#1E1E1E] rounded-xl shadow-lg border border-[#E5E5E5] dark:border-[#333333] overflow-hidden flex flex-col py-2">
+                          {resumes.map(cv => (
+                            <a key={cv.id} href={cv.fileUrl.replace('/upload/', '/upload/fl_attachment/')} download target="_blank" rel="noreferrer" className="px-4 py-3 hover:bg-[#F5F5F5] dark:hover:bg-[#2A2A2A] transition-colors text-sm text-[#4A4A4A] dark:text-[#EAEAEA] border-b border-[#E5E5E5] dark:border-[#333333] last:border-b-0 text-left">
+                              {cv.title}
+                            </a>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </>
