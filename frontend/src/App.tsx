@@ -13,9 +13,7 @@ import { SocialLinksAdmin } from './pages/admin/SocialLinksAdmin';
 import { ExperienceAdmin } from './pages/admin/ExperienceAdmin';
 import { ResumeAdmin } from './pages/admin/ResumeAdmin';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 function Navbar({ darkMode, setDarkMode }: { darkMode: boolean, setDarkMode: (v: boolean) => void }) {
   const [scrolled, setScrolled] = useState(false);
