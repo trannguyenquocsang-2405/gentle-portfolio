@@ -74,7 +74,7 @@ export function Home() {
     // Fetch data from backend
     const fetchData = async () => {
       try {
-        const [profileRes, skillsRes, projectsRes, blogsRes, socialRes, expRes] = await Promise.all([
+        const [profileRes, skillsRes, projectsRes, blogsRes, socialRes, expRes, resRes] = await Promise.all([
           axios.get(`${API_URL}/profile`),
           axios.get(`${API_URL}/skill`),
           axios.get(`${API_URL}/project`),
