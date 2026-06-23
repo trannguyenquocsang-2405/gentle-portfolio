@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { User, Code, FolderGit2, PenTool, Link2, LogOut } from 'lucide-react';
+import { User, Code, FolderGit2, PenTool, Link2, LogOut, Briefcase, FileText } from 'lucide-react';
 import { useEffect } from 'react';
 
 export function AdminDashboard() {
@@ -44,6 +44,14 @@ export function AdminDashboard() {
           <Link to="/admin/contact" className="flex items-center gap-3 px-4 py-3 text-[#6B6B6B] hover:text-[#4A4A4A] hover:bg-[#F5F5F5] rounded-xl transition-colors">
             <Link2 size={20} />
             Contact
+          </Link>
+          <Link to="/admin/experience" className="flex items-center gap-3 px-4 py-3 text-[#6B6B6B] hover:text-[#4A4A4A] hover:bg-[#F5F5F5] rounded-xl transition-colors">
+            <Briefcase size={20} />
+            Experience
+          </Link>
+          <Link to="/admin/resume" className="flex items-center gap-3 px-4 py-3 text-[#6B6B6B] hover:text-[#4A4A4A] hover:bg-[#F5F5F5] rounded-xl transition-colors">
+            <FileText size={20} />
+            Resumes
           </Link>
         </nav>
         <div className="p-4 border-t border-[#E5E5E5]">

@@ -10,9 +10,11 @@ import { SocialLinkModule } from './social-link/social-link.module';
 import { AuthModule } from './auth/auth.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { SkillCategoryModule } from './skill-category/skill-category.module';
+import { ExperienceModule } from './experience/experience.module';
+import { ResumeModule } from './resume/resume.module';
 
 @Module({
-  imports: [PrismaModule, ProfileModule, SkillModule, ProjectModule, BlogModule, SocialLinkModule, AuthModule, CloudinaryModule, SkillCategoryModule],
+  imports: [PrismaModule, ProfileModule, SkillModule, ProjectModule, BlogModule, SocialLinkModule, AuthModule, CloudinaryModule, SkillCategoryModule, ExperienceModule, ResumeModule],
   controllers: [AppController],
   providers: [AppService],
 })

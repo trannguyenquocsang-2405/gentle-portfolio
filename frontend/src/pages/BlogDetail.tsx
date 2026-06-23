@@ -30,14 +30,14 @@ export function BlogDetail() {
   });
 
   if (isLoading) {
-    return <div className="pt-32 text-center text-[#6B6B6B] animate-pulse">Loading...</div>;
+    return <div className="pt-32 text-center text-[#6B6B6B] dark:text-[#B0B0B0] animate-pulse">Loading...</div>;
   }
 
   if (isError || !blog) {
     return (
       <div className="pt-32 text-center text-red-500">
         <p className="text-xl font-medium">Lỗi khi tải bài viết.</p>
-        <p className="text-sm text-[#6B6B6B] mt-2">{error instanceof Error ? error.message : 'Bài viết không tồn tại hoặc đã bị xóa.'}</p>
+        <p className="text-sm text-[#6B6B6B] dark:text-[#B0B0B0] mt-2">{error instanceof Error ? error.message : 'Bài viết không tồn tại hoặc đã bị xóa.'}</p>
         <Link to="/" className="text-[#A3B18A] hover:text-[#8A9A73] mt-4 inline-block underline">
           Quay lại trang chủ
         </Link>
@@ -58,7 +58,7 @@ export function BlogDetail() {
           {String(children).replace(/\n$/, '')}
         </SyntaxHighlighter>
       ) : (
-        <code {...props} className="bg-gray-200 text-[#4A4A4A] px-1.5 py-0.5 rounded text-sm font-mono">
+        <code {...props} className="bg-gray-200 dark:bg-gray-800 text-[#4A4A4A] dark:text-[#EAEAEA] px-1.5 py-0.5 rounded text-sm font-mono">
           {children}
         </code>
       );
@@ -75,13 +75,13 @@ export function BlogDetail() {
         <Link to="/" className="text-[#A3B18A] hover:text-[#8A9A73] mb-8 inline-block transition-colors">
           &larr; Back to Home
         </Link>
-        <h1 className="text-4xl md:text-5xl font-serif text-[#4A4A4A] leading-tight mb-4">{blog.title}</h1>
-        <p className="text-sm text-[#888888] mb-12 border-b border-[#E5E5E5] pb-6">
+        <h1 className="text-4xl md:text-5xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA] leading-tight mb-4">{blog.title}</h1>
+        <p className="text-sm text-[#888888] dark:text-[#888888] mb-12 border-b border-[#E5E5E5] dark:border-[#333333] pb-6">
           {new Date(blog.createdAt).toLocaleDateString()}
         </p>
-        
-        <div className="prose prose-stone prose-lg max-w-none text-[#4A4A4A]">
-          <ReactMarkdown 
+
+        <div className="prose prose-stone prose-lg max-w-none text-[#4A4A4A] dark:prose-invert dark:text-[#EAEAEA]">
+          <ReactMarkdown
             components={renderers}
             rehypePlugins={[
               [rehypeSanitize, {
