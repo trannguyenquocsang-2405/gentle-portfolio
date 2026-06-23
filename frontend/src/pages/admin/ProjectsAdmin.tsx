@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { Trash2, Edit2, Plus, Image as ImageIcon } from 'lucide-react';
 import { projectService, uploadService } from '../../services/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 export function ProjectsAdmin() {
   const [projects, setProjects] = useState<any[]>([]);
-  const [formData, setFormData] = useState({ id: null, title: '', description: '', details: '', imageUrl: '', demoUrl: '', sourceUrl: '' });
+  const [formData, setFormData] = useState({ id: null, title: {vi: '', en: ''}, description: {vi: '', en: ''}, details: {vi: '', en: ''}, imageUrl: '', demoUrl: '', sourceUrl: '' });
   const [showForm, setShowForm] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [editLang, setEditLang] = useState<'vi' | 'en'>('vi');
+  const { tData } = useLanguage();
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -47,16 +50,33 @@ export function ProjectsAdmin() {
         await projectService.create(postData);
       }
       setShowForm(false);
-      setFormData({ id: null, title: '', description: '', details: '', imageUrl: '', demoUrl: '', sourceUrl: '' });
+      setFormData({ id: null, title: {vi: '', en: ''}, description: {vi: '', en: ''}, details: {vi: '', en: ''}, imageUrl: '', demoUrl: '', sourceUrl: '' });
       fetchProjects();
     } catch (error) {
       alert('Failed to save project');
     }
   };
 
+  const ensureJson = (val: any) => typeof val === 'object' && val !== null ? val : { vi: val || '', en: '' };
+
   const handleEdit = (project: any) => {
-    setFormData(project);
+    setFormData({
+      ...project,
+      title: ensureJson(project.title),
+      description: ensureJson(project.description),
+      details: ensureJson(project.details),
+    });
     setShowForm(true);
+  };
+
+  const handleTextChange = (field: string, value: string) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      [field]: {
+        ...(prev[field] || { vi: '', en: '' }),
+        [editLang]: value
+      }
+    }));
   };
 
   const handleDelete = async (id: number) => {
@@ -74,7 +94,7 @@ export function ProjectsAdmin() {
       <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-[#E5E5E5]">
         <h2 className="text-2xl font-serif text-[#4A4A4A]">Manage Projects</h2>
         <button 
-          onClick={() => { setShowForm(!showForm); setFormData({ id: null, title: '', description: '', details: '', imageUrl: '', demoUrl: '', sourceUrl: '' }); }}
+          onClick={() => { setShowForm(!showForm); setFormData({ id: null, title: {vi: '', en: ''}, description: {vi: '', en: ''}, details: {vi: '', en: ''}, imageUrl: '', demoUrl: '', sourceUrl: '' }); }}
           className="flex items-center gap-2 px-6 py-2 bg-[#A3B18A] text-white rounded-xl hover:bg-[#8B9973] transition-colors"
         >
           <Plus size={20} /> {showForm ? 'Cancel' : 'Add Project'}
@@ -83,18 +103,22 @@ export function ProjectsAdmin() {
 
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-[#E5E5E5] space-y-6">
+          <div className="flex bg-[#F5F5F5] rounded-lg p-1 w-max mb-6">
+            <button type="button" onClick={() => setEditLang('vi')} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${editLang === 'vi' ? 'bg-white shadow-sm text-[#A3B18A]' : 'text-[#888888] hover:text-[#4A4A4A]'}`}>Tiếng Việt</button>
+            <button type="button" onClick={() => setEditLang('en')} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${editLang === 'en' ? 'bg-white shadow-sm text-[#A3B18A]' : 'text-[#888888] hover:text-[#4A4A4A]'}`}>English</button>
+          </div>
           <div className="grid grid-cols-1 gap-6">
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#6B6B6B]">Title</label>
-              <input type="text" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A]" />
+              <label className="block text-sm font-medium text-[#6B6B6B]">Title ({editLang.toUpperCase()})</label>
+              <input type="text" required={editLang==='vi'} value={(formData.title as any)?.[editLang] || ''} onChange={e => handleTextChange('title', e.target.value)} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A]" />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Short Description</label>
-              <textarea required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] min-h-[80px]" />
+              <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Short Description ({editLang.toUpperCase()})</label>
+              <textarea required={editLang==='vi'} value={(formData.description as any)?.[editLang] || ''} onChange={e => handleTextChange('description', e.target.value)} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] min-h-[80px]" />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Detailed Work Description (Optional)</label>
-              <textarea value={formData.details || ''} onChange={e => setFormData({...formData, details: e.target.value})} placeholder="What did you do in this project? Technologies used, problems solved..." className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] min-h-[150px] whitespace-pre-wrap" />
+              <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Detailed Work Description ({editLang.toUpperCase()})</label>
+              <textarea value={(formData.details as any)?.[editLang] || ''} onChange={e => handleTextChange('details', e.target.value)} placeholder="What did you do in this project? Technologies used, problems solved..." className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] min-h-[150px] whitespace-pre-wrap" />
             </div>
             <div className="flex flex-wrap md:flex-nowrap gap-4">
               <div className="w-full md:w-1/2">
@@ -129,10 +153,10 @@ export function ProjectsAdmin() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {Array.isArray(projects) && projects.map(project => (
           <div key={project.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#E5E5E5]">
-            {project.imageUrl && <img src={project.imageUrl} alt={project.title} className="w-full h-48 object-cover" />}
+            {project.imageUrl && <img src={project.imageUrl} alt={tData(project.title)} className="w-full h-48 object-cover" />}
             <div className="p-6 space-y-3">
-              <h3 className="text-xl font-serif text-[#4A4A4A]">{project.title}</h3>
-              <p className="text-[#6B6B6B] text-sm line-clamp-3">{project.description}</p>
+              <h3 className="text-xl font-serif text-[#4A4A4A]">{tData(project.title)}</h3>
+              <p className="text-[#6B6B6B] text-sm line-clamp-3">{tData(project.description)}</p>
               
               <div className="flex gap-4 pt-2">
                 {project.demoUrl && <a href={project.demoUrl} target="_blank" rel="noreferrer" className="text-sm font-medium text-[#A3B18A] hover:text-[#8B9973]">Live Demo &rarr;</a>}

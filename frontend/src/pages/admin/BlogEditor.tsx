@@ -7,22 +7,25 @@ import { blogService, uploadService } from '../../services/api';
 export function BlogEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState<string | undefined>('');
+  const [title, setTitle] = useState({ vi: '', en: '' });
+  const [content, setContent] = useState({ vi: '', en: '' });
   const [saving, setSaving] = useState(false);
+  const [editLang, setEditLang] = useState<'vi' | 'en'>('vi');
+
+  const ensureJson = (val: any) => typeof val === 'object' && val !== null ? val : { vi: val || '', en: '' };
 
   useEffect(() => {
     if (id) {
       blogService.getById(id).then(data => {
-        setTitle(data.title);
-        setContent(data.content);
+        setTitle(ensureJson(data.title));
+        setContent(ensureJson(data.content));
       }).catch(e => console.error(e));
     }
   }, [id]);
 
   const handleSave = async () => {
-    if (!title.trim() || !content?.trim()) {
-      alert('Title and content are required');
+    if (!title.vi.trim() || !content.vi.trim()) {
+      alert('Title and content are required (at least in Vietnamese)');
       return;
     }
     setSaving(true);
@@ -48,7 +51,7 @@ export function BlogEditor() {
       const res = await uploadService.uploadImage(file);
       // Insert image markdown at cursor position or end
       const imageMarkdown = `\n![Image](${res.url})\n`;
-      setContent(prev => (prev || '') + imageMarkdown);
+      setContent(prev => ({ ...prev, [editLang]: prev[editLang] + imageMarkdown }));
     } catch (error) {
       alert('Upload failed');
     }
@@ -64,11 +67,15 @@ export function BlogEditor() {
       </div>
 
       <div className="bg-white p-8 rounded-2xl shadow-sm border border-[#E5E5E5] space-y-6">
+        <div className="flex bg-[#F5F5F5] rounded-lg p-1 w-max mb-6">
+          <button type="button" onClick={() => setEditLang('vi')} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${editLang === 'vi' ? 'bg-white shadow-sm text-[#A3B18A]' : 'text-[#888888] hover:text-[#4A4A4A]'}`}>Tiếng Việt</button>
+          <button type="button" onClick={() => setEditLang('en')} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${editLang === 'en' ? 'bg-white shadow-sm text-[#A3B18A]' : 'text-[#888888] hover:text-[#4A4A4A]'}`}>English</button>
+        </div>
         <input
           type="text"
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          placeholder="Blog Title..."
+          value={(title as any)[editLang]}
+          onChange={e => setTitle({...title, [editLang]: e.target.value})}
+          placeholder={`Blog Title (${editLang.toUpperCase()})...`}
           className="w-full px-4 py-3 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] text-xl font-serif"
         />
 
@@ -79,8 +86,8 @@ export function BlogEditor() {
 
         <div data-color-mode="light">
           <MDEditor
-            value={content}
-            onChange={setContent}
+            value={(content as any)[editLang]}
+            onChange={val => setContent({...content, [editLang]: val || ''})}
             height={500}
             className="rounded-xl overflow-hidden border border-[#E5E5E5] !shadow-none"
           />

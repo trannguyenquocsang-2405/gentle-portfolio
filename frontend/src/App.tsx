@@ -13,10 +13,12 @@ import { SocialLinksAdmin } from './pages/admin/SocialLinksAdmin';
 import { ExperienceAdmin } from './pages/admin/ExperienceAdmin';
 import { ResumeAdmin } from './pages/admin/ResumeAdmin';
 import { useEffect, useState } from 'react';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
 
 function Navbar({ darkMode, setDarkMode }: { darkMode: boolean, setDarkMode: (v: boolean) => void }) {
   const [scrolled, setScrolled] = useState(false);
+  const { lang, setLang, t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,22 +35,30 @@ function Navbar({ darkMode, setDarkMode }: { darkMode: boolean, setDarkMode: (v:
           Tran Nguyen Quoc Sang
         </Link>
         <div className="hidden md:flex items-center gap-8 text-[#4A4A4A] dark:text-[#EAEAEA] font-medium">
-          <a href="/#about" className="hover:text-[#A3B18A] transition-colors">About</a>
-          <a href="/#skills" className="hover:text-[#A3B18A] transition-colors">Skills</a>
-          <a href="/#experience" className="hover:text-[#A3B18A] transition-colors">Experience</a>
-          <a href="/#projects" className="hover:text-[#A3B18A] transition-colors">Projects</a>
-          <a href="/#blog" className="hover:text-[#A3B18A] transition-colors">Blog</a>
-          <a href="/#contact" className="hover:text-[#A3B18A] transition-colors">Contact</a>
+          <a href="/#about" className="hover:text-[#A3B18A] transition-colors">{t('nav.about')}</a>
+          <a href="/#skills" className="hover:text-[#A3B18A] transition-colors">{t('nav.skills')}</a>
+          <a href="/#experience" className="hover:text-[#A3B18A] transition-colors">{t('nav.experience')}</a>
+          <a href="/#projects" className="hover:text-[#A3B18A] transition-colors">{t('nav.projects')}</a>
+          <a href="/#blog" className="hover:text-[#A3B18A] transition-colors">{t('nav.blog')}</a>
+          <a href="/#contact" className="hover:text-[#A3B18A] transition-colors">{t('nav.contact')}</a>
 
-          <button
-            onClick={() => {
-              setDarkMode(!darkMode);
-              localStorage.setItem('theme', !darkMode ? 'dark' : 'light');
-            }}
-            className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-          >
-            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-          </button>
+          <div className="flex items-center gap-4 border-l border-gray-300 dark:border-gray-700 pl-4">
+            <button
+              onClick={() => setLang(lang === 'en' ? 'vi' : 'en')}
+              className="px-2 py-1 text-sm rounded-md font-bold hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            >
+              {lang === 'en' ? 'EN' : 'VI'}
+            </button>
+            <button
+              onClick={() => {
+                setDarkMode(!darkMode);
+                localStorage.setItem('theme', !darkMode ? 'dark' : 'light');
+              }}
+              className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            >
+              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
+          </div>
         </div>
       </div>
     </nav>
@@ -72,10 +82,11 @@ function App() {
   });
 
   return (
-    <BrowserRouter>
-      {/* Container without styling to hold Routes */}
-      <div>
-        <Routes>
+    <LanguageProvider>
+      <BrowserRouter>
+        {/* Container without styling to hold Routes */}
+        <div>
+          <Routes>
           {/* Public Routes */}
           <Route path="/" element={<PublicLayout darkMode={darkMode} setDarkMode={setDarkMode}><Home /></PublicLayout>} />
           <Route path="/blog/:id" element={<PublicLayout darkMode={darkMode} setDarkMode={setDarkMode}><BlogDetail /></PublicLayout>} />
@@ -96,6 +107,7 @@ function App() {
         </Routes>
       </div>
     </BrowserRouter>
+    </LanguageProvider>
   );
 }
 

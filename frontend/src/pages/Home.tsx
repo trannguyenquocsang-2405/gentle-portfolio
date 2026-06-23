@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Download, ChevronDown, X } from 'lucide-react';
 import { profileService, skillService, projectService, blogService, socialLinkService, experienceService, resumeService } from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
 
 const getSmartUrl = (platform: string, input: string) => {
   if (!input) return '#';
@@ -57,6 +58,7 @@ export function Home() {
   const [loading, setLoading] = useState(true);
   const [showCVDropdown, setShowCVDropdown] = useState(false);
   const [selectedProject, setSelectedProject] = useState<any | null>(null);
+  const { t, tData } = useLanguage();
 
   // Prevent scrolling when modal is open
   useEffect(() => {
@@ -137,14 +139,14 @@ export function Home() {
       <section id="about" className="flex flex-col-reverse md:flex-row items-center gap-12 pt-10 scroll-mt-28">
         <div className="flex-1 space-y-6">
           <h1 className="text-4xl md:text-5xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA] leading-tight">
-            {profile?.greeting || "Hello, I am a Developer."}
+            {tData(profile?.greeting) || "Hello, I am a Developer."}
           </h1>
           <p className="text-lg text-[#6B6B6B] dark:text-[#B0B0B0] leading-relaxed">
-            {profile?.about || "I craft digital experiences with a focus on simplicity and elegance."}
+            {tData(profile?.about) || "I craft digital experiences with a focus on simplicity and elegance."}
           </p>
           <div className="flex flex-wrap items-center gap-4 mt-4">
             <a href="#contact" className="inline-block px-8 py-3 bg-[#A3B18A] text-white font-medium rounded-full hover:bg-[#8B9973] transition-colors shadow-sm">
-              Get in touch
+              {t('hero.getInTouch')}
             </a>
 
             {/* Download CV */}
@@ -152,19 +154,19 @@ export function Home() {
               <div className="relative" onMouseEnter={() => setShowCVDropdown(true)} onMouseLeave={() => setShowCVDropdown(false)}>
                 {resumes.length === 1 ? (
                   <a href={resumes[0].fileUrl.replace('/upload/', '/upload/fl_attachment/')} download target="_blank" rel="noreferrer" className="flex items-center gap-2 px-8 py-3 border-2 border-[#A3B18A] text-[#A3B18A] dark:text-[#EAEAEA] font-medium rounded-full hover:bg-[#A3B18A] hover:text-white dark:hover:text-[#121212] transition-colors shadow-sm">
-                    <Download size={20} /> Download CV
+                    <Download size={20} /> {t('hero.downloadCV')}
                   </a>
                 ) : (
                   <>
                     <button className="flex items-center gap-2 px-8 py-3 border-2 border-[#A3B18A] text-[#A3B18A] dark:text-[#EAEAEA] font-medium rounded-full hover:bg-[#A3B18A] hover:text-white dark:hover:text-[#121212] transition-colors shadow-sm">
-                      <Download size={20} /> Download CV <ChevronDown size={18} />
+                      <Download size={20} /> {t('hero.downloadCV')} <ChevronDown size={18} />
                     </button>
                     {showCVDropdown && (
                       <div className="absolute top-full left-0 pt-2 z-50">
                         <div className="w-56 bg-white dark:bg-[#1E1E1E] rounded-xl shadow-lg border border-[#E5E5E5] dark:border-[#333333] overflow-hidden flex flex-col py-2">
                           {resumes.map(cv => (
                             <a key={cv.id} href={cv.fileUrl.replace('/upload/', '/upload/fl_attachment/')} download target="_blank" rel="noreferrer" className="px-4 py-3 hover:bg-[#F5F5F5] dark:hover:bg-[#2A2A2A] transition-colors text-sm text-[#4A4A4A] dark:text-[#EAEAEA] border-b border-[#E5E5E5] dark:border-[#333333] last:border-b-0 text-left">
-                              {cv.title}
+                              {tData(cv.title)}
                             </a>
                           ))}
                         </div>
@@ -187,7 +189,7 @@ export function Home() {
 
       {/* Skills Section */}
       <section id="skills" className="space-y-10 scroll-mt-28">
-        <h2 className="text-3xl font-serif text-center">My Skills</h2>
+        <h2 className="text-3xl font-serif text-center">{t('skills.title')}</h2>
 
         {Array.isArray(skills) && skills.length > 0 ? (
           <div className="bg-white dark:bg-[#1E1E1E] rounded-2xl shadow-sm border border-[#E5E5E5] dark:border-[#333333] overflow-hidden">
@@ -201,13 +203,13 @@ export function Home() {
             ).map(([cat, catSkills]) => (
               <div key={cat} className="flex flex-col md:flex-row border-b border-[#E5E5E5] dark:border-[#333333] last:border-b-0">
                 <div className="md:w-1/3 bg-gray-50/50 dark:bg-[#2A2A2A]/50 p-6 flex items-center md:border-r border-[#E5E5E5] dark:border-[#333333]">
-                  <h3 className="text-lg font-semibold text-[#4A4A4A] dark:text-[#EAEAEA]">{cat}</h3>
+                  <h3 className="text-lg font-semibold text-[#4A4A4A] dark:text-[#EAEAEA]">{tData(cat)}</h3>
                 </div>
                 <div className="md:w-2/3 p-6 flex flex-wrap gap-3">
                   {(catSkills as any[]).map((skill: any) => (
                     <div key={skill.id} className="flex items-center gap-2 px-4 py-2 bg-[#FAF9F6] dark:bg-[#121212] rounded-lg border border-[#E5E5E5] dark:border-[#333333] hover:border-[#A3B18A] dark:hover:border-[#A3B18A] hover:bg-white dark:hover:bg-[#2A2A2A] hover:shadow-md transition-all group cursor-default">
-                      {skill.iconUrl && <img src={skill.iconUrl} alt={skill.name} className="w-5 h-5 object-contain group-hover:scale-110 transition-transform" />}
-                      <span className="font-medium text-sm">{skill.name}</span>
+                      {skill.iconUrl && <img src={skill.iconUrl} alt={tData(skill.name)} className="w-5 h-5 object-contain group-hover:scale-110 transition-transform" />}
+                      <span className="font-medium text-sm">{tData(skill.name)}</span>
                     </div>
                   ))}
                 </div>
@@ -215,13 +217,13 @@ export function Home() {
             ))}
           </div>
         ) : (
-          <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-center">No skills added yet.</p>
+          <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-center">{t('skills.empty')}</p>
         )}
       </section>
 
       {/* Experience Section */}
       <section id="experience" className="space-y-10 scroll-mt-28">
-        <h2 className="text-3xl font-serif text-center text-[#4A4A4A] dark:text-[#EAEAEA]">Work Experience</h2>
+        <h2 className="text-3xl font-serif text-center text-[#4A4A4A] dark:text-[#EAEAEA]">{t('experience.title')}</h2>
 
         {Array.isArray(experiences) && experiences.length > 0 ? (
           <div className="relative border-l border-[#E5E5E5] dark:border-[#333333] ml-4 md:ml-8 space-y-12">
@@ -233,11 +235,11 @@ export function Home() {
                 <div className="bg-white dark:bg-[#1E1E1E] p-6 rounded-2xl shadow-sm border border-[#E5E5E5] dark:border-[#333333] hover:shadow-md transition-shadow group">
                   <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2 mb-4">
                     <div>
-                      <h3 className="text-xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA]">{exp.role}</h3>
+                      <h3 className="text-xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA]">{tData(exp.role)}</h3>
                       <p className="text-[#A3B18A] font-medium text-lg">{exp.company}</p>
                     </div>
                     <div className="text-sm text-[#888888] dark:text-[#888888] font-medium bg-[#F5F5F5] dark:bg-[#2A2A2A] px-3 py-1 rounded-full self-start">
-                      {formatMonthYear(exp.startDate)} - {exp.isCurrent ? 'Present' : (exp.endDate ? formatMonthYear(exp.endDate) : 'Present')}
+                      {formatMonthYear(exp.startDate)} - {exp.isCurrent ? t('experience.present') : (exp.endDate ? formatMonthYear(exp.endDate) : t('experience.present'))}
                       <span className="text-[#6B6B6B] dark:text-[#B0B0B0] ml-2 font-normal">
                         ({calculateDuration(exp.startDate, exp.endDate, exp.isCurrent)})
                       </span>
@@ -245,12 +247,12 @@ export function Home() {
                   </div>
                   {exp.description && (
                     <p className="text-[#6B6B6B] dark:text-[#B0B0B0] whitespace-pre-wrap leading-relaxed">
-                      {exp.description}
+                      {tData(exp.description)}
                     </p>
                   )}
                   {exp.productUrl && (
                     <a href={exp.productUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 mt-4 text-sm font-medium text-[#A3B18A] hover:text-[#8A9A73] transition-colors">
-                      🌐 Product / Demo <span className="text-lg leading-none">&rarr;</span>
+                      🌐 {t('experience.demo')} <span className="text-lg leading-none">&rarr;</span>
                     </a>
                   )}
                 </div>
@@ -258,13 +260,13 @@ export function Home() {
             ))}
           </div>
         ) : (
-          <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-center">No experience records added yet.</p>
+          <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-center">{t('experience.empty')}</p>
         )}
       </section>
 
       {/* Projects Section */}
       <section id="projects" className="space-y-8 scroll-mt-28">
-        <h2 className="text-3xl font-serif text-center">Featured Projects</h2>
+        <h2 className="text-3xl font-serif text-center">{t('projects.title')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {Array.isArray(projects) && projects.length > 0 ? projects.map(project => (
             <div
@@ -274,52 +276,52 @@ export function Home() {
             >
               {project.imageUrl && (
                 <div className="h-48 overflow-hidden">
-                  <img src={project.imageUrl} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={project.imageUrl} alt={tData(project.title)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
               )}
               <div className="p-6 space-y-4 flex-1 flex flex-col">
                 <div>
-                  <h3 className="text-xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA]">{project.title}</h3>
-                  <p className="text-[#6B6B6B] dark:text-[#B0B0B0] mt-2">{project.description}</p>
+                  <h3 className="text-xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA]">{tData(project.title)}</h3>
+                  <p className="text-[#6B6B6B] dark:text-[#B0B0B0] mt-2">{tData(project.description)}</p>
                 </div>
                 <div className="mt-auto pt-4 flex gap-4" onClick={(e) => e.stopPropagation()}>
                   {project.demoUrl && (
                     <a href={project.demoUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm font-medium text-[#A3B18A] hover:text-[#8A9A73] transition-colors">
-                      🌐 Live Demo <span className="text-lg leading-none">&rarr;</span>
+                      🌐 {t('projects.liveDemo')} <span className="text-lg leading-none">&rarr;</span>
                     </a>
                   )}
                   {project.sourceUrl && (
                     <a href={project.sourceUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-sm font-medium text-[#A3B18A] hover:text-[#8A9A73] transition-colors">
-                      💻 Source Code <span className="text-lg leading-none">&rarr;</span>
+                      💻 {t('projects.sourceCode')} <span className="text-lg leading-none">&rarr;</span>
                     </a>
                   )}
                 </div>
               </div>
             </div>
           )) : (
-            <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-center w-full">Loading projects...</p>
+            <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-center w-full">{t('projects.empty')}</p>
           )}
         </div>
       </section>
 
       {/* Blog Section */}
       <section id="blog" className="space-y-8 scroll-mt-28">
-        <h2 className="text-3xl font-serif text-center"> Blog </h2>
+        <h2 className="text-3xl font-serif text-center">{t('blog.title')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.isArray(blogs) && blogs.length > 0 ? blogs.map(blog => (
             <Link key={blog.id} to={`/blog/${blog.id}`} className="block bg-white dark:bg-[#1E1E1E] p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-[#E5E5E5] dark:border-[#333333] group">
-              <h3 className="text-xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA] group-hover:text-[#A3B18A] dark:group-hover:text-[#A3B18A] transition-colors">{blog.title}</h3>
+              <h3 className="text-xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA] group-hover:text-[#A3B18A] dark:group-hover:text-[#A3B18A] transition-colors">{tData(blog.title)}</h3>
               <p className="text-sm text-[#888888] dark:text-[#888888] mt-2">{new Date(blog.createdAt).toLocaleDateString()}</p>
             </Link>
           )) : (
-            <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-center w-full">Loading blogs...</p>
+            <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-center w-full">{t('blog.empty')}</p>
           )}
         </div>
       </section>
 
       {/* Footer / Contact */}
       <footer id="contact" className="text-center pt-10 pb-6 border-t border-[#E5E5E5] dark:border-[#333333] scroll-mt-28">
-        <h2 className="text-2xl font-serif mb-6 text-[#4A4A4A] dark:text-[#EAEAEA]">Let's Connect</h2>
+        <h2 className="text-2xl font-serif mb-6 text-[#4A4A4A] dark:text-[#EAEAEA]">{t('contact.title')}</h2>
         <div className="flex justify-center flex-wrap gap-6">
           {Array.isArray(socialLinks) && socialLinks.length > 0 ? socialLinks.map(link => (
             <a key={link.id} href={getSmartUrl(link.platform, link.url)} target="_blank" rel="noreferrer" className="px-5 py-3 bg-white dark:bg-[#1E1E1E] rounded-xl shadow-sm border border-[#E5E5E5] dark:border-[#333333] flex items-center gap-3 text-[#4A4A4A] dark:text-[#EAEAEA] hover:border-[#A3B18A] dark:hover:border-[#A3B18A] hover:shadow-md hover:text-[#A3B18A] dark:hover:text-[#A3B18A] transition-all group">
@@ -327,7 +329,7 @@ export function Home() {
               <span className="font-medium">{getDisplayText(link.platform, link.url)}</span>
             </a>
           )) : (
-            <p className="text-[#888888] dark:text-[#888888]">No contact info available.</p>
+            <p className="text-[#888888] dark:text-[#888888]">{t('contact.empty')}</p>
           )}
         </div>
         <p className="text-sm text-[#888888] dark:text-[#666666] mt-10">© {new Date().getFullYear()} Sang Tran. Software Developer • Flutter Developer.</p>
@@ -352,13 +354,13 @@ export function Home() {
               <X size={20} />
             </button>
 
-            <div className="overflow-y-auto no-scrollbar flex-1">
+              <div className="overflow-y-auto no-scrollbar flex-1">
               {selectedProject.imageUrl && (
                 <div className="w-full h-64 sm:h-80 relative shrink-0">
-                  <img src={selectedProject.imageUrl} alt={selectedProject.title} className="w-full h-full object-cover" />
+                  <img src={selectedProject.imageUrl} alt={tData(selectedProject.title)} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <h2 className="absolute bottom-6 left-6 right-6 text-3xl sm:text-4xl font-serif text-white font-bold tracking-wide">
-                    {selectedProject.title}
+                    {tData(selectedProject.title)}
                   </h2>
                 </div>
               )}
@@ -366,22 +368,22 @@ export function Home() {
               <div className="p-6 sm:p-8 space-y-8">
                 {!selectedProject.imageUrl && (
                   <h2 className="text-3xl sm:text-4xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA] font-bold tracking-wide">
-                    {selectedProject.title}
+                    {tData(selectedProject.title)}
                   </h2>
                 )}
 
                 <div className="space-y-4">
-                  <h3 className="text-xl font-medium text-[#4A4A4A] dark:text-[#EAEAEA]">Overview</h3>
+                  <h3 className="text-xl font-medium text-[#4A4A4A] dark:text-[#EAEAEA]">{t('modal.overview')}</h3>
                   <p className="text-[#6B6B6B] dark:text-[#B0B0B0] text-lg leading-relaxed">
-                    {selectedProject.description}
+                    {tData(selectedProject.description)}
                   </p>
                 </div>
 
                 {selectedProject.details && (
                   <div className="space-y-4">
-                    <h3 className="text-xl font-medium text-[#4A4A4A] dark:text-[#EAEAEA]">What I Did</h3>
+                    <h3 className="text-xl font-medium text-[#4A4A4A] dark:text-[#EAEAEA]">{t('modal.whatIdid')}</h3>
                     <p className="text-[#6B6B6B] dark:text-[#B0B0B0] whitespace-pre-wrap leading-relaxed">
-                      {selectedProject.details}
+                      {tData(selectedProject.details)}
                     </p>
                   </div>
                 )}
@@ -393,12 +395,12 @@ export function Home() {
               <div className="p-6 bg-[#FAF9F6] dark:bg-[#121212] border-t border-[#E5E5E5] dark:border-[#333333] shrink-0 flex flex-wrap gap-4">
                 {selectedProject.demoUrl && (
                   <a href={selectedProject.demoUrl} target="_blank" rel="noreferrer" className="flex-1 min-w-[140px] text-center px-6 py-3 bg-[#A3B18A] text-white font-medium rounded-xl hover:bg-[#8B9973] transition-colors shadow-sm">
-                    🌐 Live Demo
+                    🌐 {t('projects.liveDemo')}
                   </a>
                 )}
                 {selectedProject.sourceUrl && (
                   <a href={selectedProject.sourceUrl} target="_blank" rel="noreferrer" className="flex-1 min-w-[140px] text-center px-6 py-3 border-2 border-[#A3B18A] text-[#A3B18A] dark:text-[#EAEAEA] font-medium rounded-xl hover:bg-[#A3B18A] hover:text-white dark:hover:text-[#121212] transition-colors">
-                    💻 Source Code
+                    💻 {t('projects.sourceCode')}
                   </a>
                 )}
               </div>

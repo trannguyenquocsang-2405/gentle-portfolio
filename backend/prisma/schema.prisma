@@ -10,19 +10,19 @@ model Profile {
   id       Int     @id @default(1)
   name     String
   avatar   String?
-  greeting String?
-  about    String?
+  greeting Json?
+  about    Json?
 }
 
 model SkillCategory {
   id     Int     @id @default(autoincrement())
-  name   String  @unique
+  name   Json    @unique
   skills Skill[]
 }
 
 model Skill {
   id         Int            @id @default(autoincrement())
-  name       String
+  name       Json
   iconUrl    String?
   categoryId Int?
   category   SkillCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
@@ -30,19 +30,19 @@ model Skill {
 
 model Project {
   id          Int      @id @default(autoincrement())
-  title       String
-  description String
+  title       Json
+  description Json
   imageUrl    String?
   demoUrl     String?
   sourceUrl   String?
-  details     String?
+  details     Json?
   createdAt   DateTime @default(now())
 }
 
 model BlogPost {
   id        Int      @id @default(autoincrement())
-  title     String
-  content   String
+  title     Json
+  content   Json
   published Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -58,11 +58,11 @@ model SocialLink {
 model Experience {
   id          Int      @id @default(autoincrement())
   company     String
-  role        String
+  role        Json
   startDate   DateTime
   endDate     DateTime?
   isCurrent   Boolean  @default(false)
-  description String?
+  description Json?
   productUrl  String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -70,7 +70,7 @@ model Experience {
 
 model Resume {
   id        Int      @id @default(autoincrement())
-  title     String
+  title     Json
   fileUrl   String
   createdAt DateTime @default(now())
 }

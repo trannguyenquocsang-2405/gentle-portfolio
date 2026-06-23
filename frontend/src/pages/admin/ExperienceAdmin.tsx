@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Trash2, Edit2, Plus } from 'lucide-react';
 import { experienceService } from '../../services/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 export function ExperienceAdmin() {
   const [experiences, setExperiences] = useState<any[]>([]);
@@ -9,13 +10,15 @@ export function ExperienceAdmin() {
   const [formData, setFormData] = useState({
     id: null as number | null,
     company: '',
-    role: '',
+    role: { vi: '', en: '' },
     startDate: '',
     endDate: '',
     isCurrent: false,
-    description: '',
+    description: { vi: '', en: '' },
     productUrl: ''
   });
+  const [editLang, setEditLang] = useState<'vi'|'en'>('vi');
+  const { tData } = useLanguage();
 
   useEffect(() => {
     fetchData();
@@ -32,7 +35,7 @@ export function ExperienceAdmin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.company.trim() || !formData.role.trim() || !formData.startDate) return;
+    if (!formData.company.trim() || !formData.role.vi.trim() || !formData.startDate) return;
     
     try {
       const payload = {
@@ -52,13 +55,15 @@ export function ExperienceAdmin() {
       }
       
       // Reset form
-      setFormData({ id: null, company: '', role: '', startDate: '', endDate: '', isCurrent: false, description: '', productUrl: '' });
+      setFormData({ id: null, company: '', role: { vi: '', en: '' }, startDate: '', endDate: '', isCurrent: false, description: { vi: '', en: '' }, productUrl: '' });
       setShowForm(false);
       fetchData();
     } catch (error) {
       alert('Failed to save experience');
     }
   };
+
+  const ensureJson = (val: any) => typeof val === 'object' && val !== null ? val : { vi: val || '', en: '' };
 
   const handleEdit = (exp: any) => {
     const startObj = new Date(exp.startDate);
@@ -67,14 +72,24 @@ export function ExperienceAdmin() {
     setFormData({
       id: exp.id,
       company: exp.company,
-      role: exp.role,
+      role: ensureJson(exp.role),
       startDate: `${startObj.getFullYear()}-${String(startObj.getMonth() + 1).padStart(2, '0')}`,
       endDate: endObj ? `${endObj.getFullYear()}-${String(endObj.getMonth() + 1).padStart(2, '0')}` : '',
       isCurrent: exp.isCurrent,
-      description: exp.description || '',
+      description: ensureJson(exp.description),
       productUrl: exp.productUrl || ''
     });
     setShowForm(true);
+  };
+
+  const handleTextChange = (field: string, value: string) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      [field]: {
+        ...(prev[field] || { vi: '', en: '' }),
+        [editLang]: value
+      }
+    }));
   };
 
   const handleDelete = async (id: number) => {
@@ -97,7 +112,7 @@ export function ExperienceAdmin() {
       <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-[#E5E5E5]">
         <h2 className="text-2xl font-serif text-[#4A4A4A]">Manage Work Experience</h2>
         <button 
-          onClick={() => { setShowForm(!showForm); setFormData({ id: null, company: '', role: '', startDate: '', endDate: '', isCurrent: false, description: '', productUrl: '' }); }}
+          onClick={() => { setShowForm(!showForm); setFormData({ id: null, company: '', role: {vi:'', en:''}, startDate: '', endDate: '', isCurrent: false, description: {vi:'', en:''}, productUrl: '' }); }}
           className="flex items-center gap-2 px-6 py-2 bg-[#A3B18A] text-white rounded-xl hover:bg-[#8B9973] transition-colors"
         >
           <Plus size={20} /> {showForm ? 'Cancel' : 'Add Experience'}
@@ -106,6 +121,10 @@ export function ExperienceAdmin() {
         
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-2xl shadow-sm border border-[#E5E5E5] space-y-4">
+          <div className="flex bg-[#F5F5F5] rounded-lg p-1 w-max mb-6">
+            <button type="button" onClick={() => setEditLang('vi')} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${editLang === 'vi' ? 'bg-white shadow-sm text-[#A3B18A]' : 'text-[#888888] hover:text-[#4A4A4A]'}`}>Tiếng Việt</button>
+            <button type="button" onClick={() => setEditLang('en')} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${editLang === 'en' ? 'bg-white shadow-sm text-[#A3B18A]' : 'text-[#888888] hover:text-[#4A4A4A]'}`}>English</button>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
@@ -117,10 +136,10 @@ export function ExperienceAdmin() {
             />
             <input
               type="text"
-              required
-              value={formData.role}
-              onChange={e => setFormData({...formData, role: e.target.value})}
-              placeholder="Role/Job Title..."
+              required={editLang === 'vi'}
+              value={(formData.role as any)[editLang] || ''}
+              onChange={e => handleTextChange('role', e.target.value)}
+              placeholder={`Role/Job Title (${editLang.toUpperCase()})...`}
               className="px-4 py-3 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A]"
             />
           </div>
@@ -161,9 +180,9 @@ export function ExperienceAdmin() {
           </div>
 
           <textarea
-            value={formData.description}
-            onChange={e => setFormData({...formData, description: e.target.value})}
-            placeholder="Description (optional)..."
+            value={(formData.description as any)[editLang] || ''}
+            onChange={e => handleTextChange('description', e.target.value)}
+            placeholder={`Description (${editLang.toUpperCase()})...`}
             rows={4}
             className="w-full px-4 py-3 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] resize-y"
           />
@@ -188,12 +207,12 @@ export function ExperienceAdmin() {
         {experiences.length > 0 ? experiences.map((exp, index) => (
           <div key={exp.id} className={`flex justify-between items-start p-6 ${index !== experiences.length - 1 ? 'border-b border-[#E5E5E5]' : ''}`}>
             <div>
-              <h3 className="text-lg font-bold text-[#4A4A4A]">{exp.role}</h3>
+              <h3 className="text-lg font-bold text-[#4A4A4A]">{tData(exp.role)}</h3>
               <p className="text-[#A3B18A] font-medium">{exp.company}</p>
               <p className="text-sm text-[#6B6B6B] mt-1">
                 {formatMonthYear(exp.startDate)} - {exp.isCurrent ? 'Present' : (exp.endDate ? formatMonthYear(exp.endDate) : 'Present')}
               </p>
-              {exp.description && <p className="text-[#6B6B6B] mt-3 whitespace-pre-wrap">{exp.description}</p>}
+              {exp.description && <p className="text-[#6B6B6B] mt-3 whitespace-pre-wrap">{tData(exp.description)}</p>}
               {exp.productUrl && (
                 <a href={exp.productUrl} target="_blank" rel="noreferrer" className="inline-block mt-3 text-sm text-[#A3B18A] hover:underline">
                   🌐 Demo/Product Link

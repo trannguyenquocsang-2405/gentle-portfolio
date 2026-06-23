@@ -6,11 +6,31 @@ export function ProfileAdmin() {
   const [profile, setProfile] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [editLang, setEditLang] = useState<'vi' | 'en'>('vi');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    profileService.get().then(res => setProfile(res[0]));
+    profileService.get().then(res => {
+      // Ensure JSON structure if missing
+      const data = res[0] || {};
+      const ensureJson = (val: any) => typeof val === 'object' && val !== null ? val : { vi: val || '', en: '' };
+      setProfile({
+        ...data,
+        greeting: ensureJson(data.greeting),
+        about: ensureJson(data.about),
+      });
+    });
   }, []);
+
+  const handleTextChange = (field: string, value: string) => {
+    setProfile((prev: any) => ({
+      ...prev,
+      [field]: {
+        ...(prev[field] || { vi: '', en: '' }),
+        [editLang]: value
+      }
+    }));
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,8 +63,26 @@ export function ProfileAdmin() {
 
   return (
     <div className="bg-white p-8 rounded-2xl shadow-sm border border-[#E5E5E5]">
-      <h2 className="text-2xl font-serif mb-6 text-[#4A4A4A]">Edit Profile</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-serif text-[#4A4A4A]">Edit Profile</h2>
+        <div className="flex bg-[#F5F5F5] rounded-lg p-1">
+          <button
+            onClick={() => setEditLang('vi')}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${editLang === 'vi' ? 'bg-white shadow-sm text-[#A3B18A]' : 'text-[#888888] hover:text-[#4A4A4A]'}`}
+          >
+            Tiếng Việt
+          </button>
+          <button
+            onClick={() => setEditLang('en')}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${editLang === 'en' ? 'bg-white shadow-sm text-[#A3B18A]' : 'text-[#888888] hover:text-[#4A4A4A]'}`}
+          >
+            English
+          </button>
+        </div>
+      </div>
+      
       <form onSubmit={handleSave} className="space-y-6">
+        {/* Name is usually universal, kept as normal string. If you want it bilingual, just use handleTextChange */}
         <div>
           <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Name</label>
           <input
@@ -55,20 +93,20 @@ export function ProfileAdmin() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Greeting</label>
+          <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Greeting ({editLang.toUpperCase()})</label>
           <input
             type="text"
-            value={profile.greeting || ''}
-            onChange={e => setProfile({...profile, greeting: e.target.value})}
+            value={profile.greeting?.[editLang] || ''}
+            onChange={e => handleTextChange('greeting', e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] transition-colors"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[#6B6B6B] mb-2">About</label>
+          <label className="block text-sm font-medium text-[#6B6B6B] mb-2">About ({editLang.toUpperCase()})</label>
           <textarea
             rows={5}
-            value={profile.about}
-            onChange={e => setProfile({...profile, about: e.target.value})}
+            value={profile.about?.[editLang] || ''}
+            onChange={e => handleTextChange('about', e.target.value)}
             className="w-full px-4 py-3 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] transition-colors resize-none"
           />
         </div>

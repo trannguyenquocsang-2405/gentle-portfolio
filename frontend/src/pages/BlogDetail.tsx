@@ -6,17 +6,19 @@ import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import { blogService } from '../services/api';
+import { useLanguage } from '../context/LanguageContext';
 
 interface Blog {
   id: string;
-  title: string;
-  content: string;
+  title: any;
+  content: any;
   createdAt: string;
   updatedAt: string;
 }
 
 export function BlogDetail() {
   const { id } = useParams<{ id: string }>();
+  const { t, tData } = useLanguage();
 
   const { data: blog, isLoading, isError, error } = useQuery<Blog>({
     queryKey: ['blog', id],
@@ -70,17 +72,20 @@ export function BlogDetail() {
     }
   };
 
+  const titleStr = tData(blog.title);
+  const contentStr = tData(blog.content);
+
   return (
     <>
       <Helmet>
-        <title>{blog.title} | Tran Nguyen Quoc Sang</title>
-        <meta name="description" content={blog.content.substring(0, 150).replace(/\n/g, ' ') + '...'} />
+        <title>{titleStr} | Tran Nguyen Quoc Sang</title>
+        <meta name="description" content={contentStr.substring(0, 150).replace(/\n/g, ' ') + '...'} />
       </Helmet>
       <div className="pt-32 pb-20 px-6 max-w-3xl mx-auto">
         <Link to="/" className="text-[#A3B18A] hover:text-[#8A9A73] mb-8 inline-block transition-colors">
-          &larr; Back to Home
+          &larr; {t('blogDetail.back')}
         </Link>
-        <h1 className="text-4xl md:text-5xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA] leading-tight mb-4">{blog.title}</h1>
+        <h1 className="text-4xl md:text-5xl font-serif text-[#4A4A4A] dark:text-[#EAEAEA] leading-tight mb-4">{titleStr}</h1>
         <p className="text-sm text-[#888888] dark:text-[#888888] mb-12 border-b border-[#E5E5E5] dark:border-[#333333] pb-6">
           {new Date(blog.createdAt).toLocaleDateString()}
         </p>
@@ -101,7 +106,7 @@ export function BlogDetail() {
               }]
             ]}
           >
-            {blog.content}
+            {contentStr}
           </ReactMarkdown>
         </div>
       </div>

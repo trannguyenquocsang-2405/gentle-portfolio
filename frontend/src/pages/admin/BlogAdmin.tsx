@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { Trash2, Edit2, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { blogService } from '../../services/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 export function BlogAdmin() {
   const [blogs, setBlogs] = useState<any[]>([]);
   const navigate = useNavigate();
+  const { tData } = useLanguage();
 
   useEffect(() => {
     fetchBlogs();
@@ -46,7 +48,7 @@ export function BlogAdmin() {
         {Array.isArray(blogs) && blogs.map((blog, index) => (
           <div key={blog.id} className={`p-6 flex items-center justify-between ${index !== blogs.length - 1 ? 'border-b border-[#E5E5E5]' : ''}`}>
             <div>
-              <h3 className="text-xl font-serif text-[#4A4A4A]">{blog.title}</h3>
+              <h3 className="text-xl font-serif text-[#4A4A4A]">{tData(blog.title)}</h3>
               <p className="text-sm text-[#888888] mt-1">{new Date(blog.createdAt).toLocaleDateString()}</p>
             </div>
             <div className="flex gap-2">
