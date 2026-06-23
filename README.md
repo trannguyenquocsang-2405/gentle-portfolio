@@ -1,32 +1,33 @@
-# 🚀 Fullstack Personal Portfolio & CMS
+# 🚀 Gentle Portfolio & Headless CMS
 
-A complete, full-stack personal portfolio and blog platform equipped with a custom Content Management System (CMS). Designed to showcase projects, manage work experiences, and publish blog posts dynamically—without needing to touch the source code after deployment.
+A highly optimized, full-stack personal portfolio and blog platform equipped with a **Custom Multilingual Content Management System (CMS)**. Designed from the ground up to showcase projects, manage work experiences, and publish blog posts dynamically.
 
-## ✨ Features
+## ✨ Key Achievements & Features
 
-- 🎨 **Dynamic Portfolio:** Showcase your projects with demo URLs, source code links, and rich Markdown descriptions.
-- 💼 **Experience Timeline:** Manage and display your work history, roles, and product links seamlessly.
-- 📝 **Integrated Markdown Blog:** Write, edit, and publish blog posts directly from the custom Admin Dashboard using a WYSIWYG Markdown editor.
-- 🛠️ **Custom Admin Panel:** A comprehensive backend interface to update your profile (avatar, greetings), skills, social links, and resume.
-- ⚡ **High Performance:** Powered by React Query for intelligent caching, smooth state management, and fast navigation.
-- 📱 **Responsive Design:** Fully responsive UI crafted with Tailwind CSS v4.
+- 🏗️ **Clean Architecture:** Frontend logic is decoupled into distinct layers—UI Views, API Services, and State Providers—ensuring long-term maintainability and scalability.
+- 🌍 **Native Multilingual (i18n) Engine:** Built a custom localization system utilizing PostgreSQL's `JSONB` to store dual-language content (English/Vietnamese). The Admin Dashboard provides side-by-side editing, while the Frontend dynamically switches languages without reloading.
+- 🎨 **Minimalist & Dynamic UI:** Crafted an elegant, responsive interface with Tailwind CSS v4 featuring smooth micro-animations and seamless Light/Dark mode transitions.
+- 📝 **Integrated Markdown Blog:** Write, edit, and publish blog posts natively from the custom Admin Dashboard using a WYSIWYG Markdown editor.
+- 🛠️ **Custom Admin Panel:** A secure backend interface to update your profile (avatar, greetings), categorize skills, upload CVs (PDFs), and manage work history.
+- ⚡ **High Performance & Type-Safety:** End-to-end type safety using TypeScript across both Frontend (React) and Backend (NestJS).
+- ☁️ **Cloud Storage Integration:** Handled direct image and PDF uploads securely to Cloudinary.
 
 ## 🛠️ Tech Stack
 
 ### Frontend
 - **Framework:** React 19 + TypeScript
-- **Build Tool:** Vite
 - **Styling:** Tailwind CSS 4 + Tailwind Typography
-- **State/Fetching:** TanStack React Query v5 + Axios
-- **Routing:** React Router v7
-- **Markdown:** React Markdown, UIW React MD Editor
+- **Architecture:** Clean Architecture (Services, Contexts, Views)
+- **Routing & State:** React Router v7 + React Context API
+- **Editor:** UIW React MD Editor (Markdown)
 
 ### Backend
-- **Framework:** NestJS
+- **Framework:** NestJS (Node.js)
 - **Language:** TypeScript
 - **ORM:** Prisma
-- **Database:** PostgreSQL
-- **File Upload:** Cloudinary / Multer
+- **Database:** PostgreSQL (Extensive use of `JSONB` for i18n)
+- **Storage:** Cloudinary (Images & PDF Uploads)
+- **Security:** REST API endpoints with robust error handling
 
 ---
 
@@ -35,7 +36,7 @@ A complete, full-stack personal portfolio and blog platform equipped with a cust
 ### Prerequisites
 - Node.js (v18+)
 - PostgreSQL database
-- Cloudinary account (for image uploads)
+- Cloudinary account (for media uploads)
 
 ### 1. Backend Setup
 
@@ -46,7 +47,7 @@ cd backend
 npm install
 
 # Setup environment variables
-# Create a .env file based on the provided .env.example (if any) and add your DATABASE_URL
+# Create a .env file and add your DATABASE_URL and CLOUDINARY credentials
 # Example: DATABASE_URL="postgresql://user:password@localhost:5432/portfolio?schema=public"
 
 # Generate Prisma Client & Push schema to DB
@@ -73,17 +74,15 @@ npm install
 npm run dev
 ```
 
----
+## 🗄️ Database Architecture
 
-## 🗄️ Database Schema Overview
-
-The database is powered by PostgreSQL and managed via Prisma. Core models include:
-- `Profile`: Manages name, avatar, greeting, and about text.
-- `Project`: Stores project details, demo URLs, and descriptions.
-- `BlogPost`: Manages markdown blog posts (published/draft).
-- `Experience`: Work history and roles.
-- `Skill` & `SkillCategory`: Grouped technical skills.
-- `Resume`: Links to the latest CV/Resume file.
+The database is powered by PostgreSQL. Core tables include:
+- `Profile`: Manages identity, avatar, and localized greeting/about strings.
+- `Project`: Stores project details, demo URLs, and localized descriptions.
+- `BlogPost`: Manages markdown blog posts with localized titles and content.
+- `Experience`: Work history with JSONB roles and descriptions.
+- `Skill` & `SkillCategory`: Grouped technical skills, localized categories.
+- `Resume`: Links to the latest CV/Resume files securely.
 
 ## 🤝 Contributing
 Since this is a personal portfolio template, feel free to fork this repository, customize the UI, and connect it to your own database to make it yours!
