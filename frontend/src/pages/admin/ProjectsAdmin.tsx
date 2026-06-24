@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Trash2, Edit2, Plus, Image as ImageIcon } from 'lucide-react';
+import MDEditor from '@uiw/react-md-editor';
 import { projectService, uploadService } from '../../services/api';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -118,7 +119,14 @@ export function ProjectsAdmin() {
             </div>
             <div className="space-y-2">
               <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Detailed Work Description ({editLang.toUpperCase()})</label>
-              <textarea value={(formData.details as any)?.[editLang] || ''} onChange={e => handleTextChange('details', e.target.value)} placeholder="What did you do in this project? Technologies used, problems solved..." className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A] min-h-[150px] whitespace-pre-wrap" />
+              <div data-color-mode="light">
+                <MDEditor
+                  value={(formData.details as any)?.[editLang] || ''}
+                  onChange={val => handleTextChange('details', val || '')}
+                  height={300}
+                  className="rounded-xl overflow-hidden border border-[#E5E5E5] !shadow-none"
+                />
+              </div>
             </div>
             <div className="flex flex-wrap md:flex-nowrap gap-4">
               <div className="w-full md:w-1/2">
