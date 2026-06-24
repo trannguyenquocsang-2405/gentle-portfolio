@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { Download, ChevronDown, X } from 'lucide-react';
 import { profileService, skillService, projectService, blogService, socialLinkService, experienceService, resumeService } from '../services/api';
 import { useLanguage } from '../context/LanguageContext';
+import ReactMarkdown, { type Components } from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 
 const getSmartUrl = (platform: string, input: string) => {
   if (!input) return '#';
@@ -45,6 +49,26 @@ const getDisplayText = (platform: string, input: string) => {
 
   // Với link web bình thường thì chỉ hiện tên Platform
   return platform;
+};
+
+const renderers: Components = {
+  code({ node, inline, className, children, ...props }: any) {
+    const match = /language-(\w+)/.exec(className || '');
+    return !inline && match ? (
+      <SyntaxHighlighter
+        {...props}
+        style={materialDark as any}
+        language={match[1]}
+        PreTag="div"
+      >
+        {String(children).replace(/\n$/, '')}
+      </SyntaxHighlighter>
+    ) : (
+      <code {...props} className="bg-gray-200 dark:bg-gray-800 text-[#4A4A4A] dark:text-[#EAEAEA] px-1.5 py-0.5 rounded text-sm font-mono">
+        {children}
+      </code>
+    );
+  }
 };
 
 export function Home() {
@@ -385,9 +409,25 @@ export function Home() {
                 {selectedProject.details && (
                   <div className="space-y-4">
                     <h3 className="text-xl font-medium text-[#4A4A4A] dark:text-[#EAEAEA]">{t('modal.whatIdid')}</h3>
-                    <p className="text-[#6B6B6B] dark:text-[#B0B0B0] whitespace-pre-wrap leading-relaxed">
-                      {tData(selectedProject.details)}
-                    </p>
+                    <div className="prose prose-stone max-w-none text-[#6B6B6B] dark:prose-invert dark:text-[#B0B0B0]">
+                      <ReactMarkdown
+                        components={renderers}
+                        rehypePlugins={[
+                          [rehypeSanitize, {
+                            ...defaultSchema,
+                            attributes: {
+                              ...defaultSchema.attributes,
+                              code: [
+                                ...(defaultSchema.attributes?.code || []),
+                                'className',
+                              ],
+                            },
+                          }]
+                        ]}
+                      >
+                        {tData(selectedProject.details)}
+                      </ReactMarkdown>
+                    </div>
                   </div>
                 )}
               </div>
