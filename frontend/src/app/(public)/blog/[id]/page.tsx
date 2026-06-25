@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import BlogClient from './BlogClient';
 import { blogService } from '@/services/api';
 
+export const revalidate = 60; // ISR: Tự động cập nhật cache mỗi 60 giây
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   try {
     const { id } = await params;

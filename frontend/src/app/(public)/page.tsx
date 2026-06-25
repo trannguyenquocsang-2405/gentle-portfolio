@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import HomeClient from './HomeClient';
 import { profileService, skillService, projectService, blogService, socialLinkService, experienceService, resumeService } from '@/services/api';
 
+export const revalidate = 60; // ISR: Tự động cập nhật cache mỗi 60 giây
+
 export const metadata: Metadata = {
   title: 'Tran Nguyen Quoc Sang',
   description: 'Software Developer • Flutter Developer',
