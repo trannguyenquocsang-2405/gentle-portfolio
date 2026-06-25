@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 
 export type Language = 'en' | 'vi';
@@ -70,15 +70,20 @@ const translations: Record<Language, Record<string, string>> = {
 };
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [lang, setLangState] = useState<Language>(() => {
+  const [lang, setLangState] = useState<Language>('vi');
+
+  useEffect(() => {
     const saved = localStorage.getItem('app_lang');
-    if (saved === 'vi' || saved === 'en') return saved;
-    return 'vi'; // Mặc định là tiếng Việt
-  });
+    if (saved === 'vi' || saved === 'en') {
+      setLangState(saved as Language);
+    }
+  }, []);
 
   const setLang = (newLang: Language) => {
     setLangState(newLang);
-    localStorage.setItem('app_lang', newLang);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('app_lang', newLang);
+    }
   };
 
   const t = (key: string) => {
