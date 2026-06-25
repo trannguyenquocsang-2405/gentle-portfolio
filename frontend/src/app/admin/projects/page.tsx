@@ -8,7 +8,7 @@ import { useLanguage } from '@/context/LanguageContext';
 
 export default function ProjectsAdmin() {
   const [projects, setProjects] = useState<any[]>([]);
-  const [formData, setFormData] = useState({ id: null, title: {vi: '', en: ''}, description: {vi: '', en: ''}, details: {vi: '', en: ''}, imageUrl: '', demoUrl: '', sourceUrl: '' });
+  const [formData, setFormData] = useState({ id: null, title: {vi: '', en: ''}, description: {vi: '', en: ''}, details: {vi: '', en: ''}, imageUrl: '', demoUrl: '', sourceUrl: '', isFeatured: false });
   const [showForm, setShowForm] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [editLang, setEditLang] = useState<'vi' | 'en'>('vi');
@@ -49,7 +49,7 @@ export default function ProjectsAdmin() {
         await projectService.create(postData);
       }
       setShowForm(false);
-      setFormData({ id: null, title: {vi: '', en: ''}, description: {vi: '', en: ''}, details: {vi: '', en: ''}, imageUrl: '', demoUrl: '', sourceUrl: '' });
+      setFormData({ id: null, title: {vi: '', en: ''}, description: {vi: '', en: ''}, details: {vi: '', en: ''}, imageUrl: '', demoUrl: '', sourceUrl: '', isFeatured: false });
       fetchProjects();
     } catch (error) {
       alert('Failed to save project');
@@ -97,7 +97,7 @@ export default function ProjectsAdmin() {
       <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-[#E5E5E5]">
         <h2 className="text-2xl font-serif text-[#4A4A4A]">Manage Projects</h2>
         <button 
-          onClick={() => { setShowForm(!showForm); setFormData({ id: null, title: {vi: '', en: ''}, description: {vi: '', en: ''}, details: {vi: '', en: ''}, imageUrl: '', demoUrl: '', sourceUrl: '' }); }}
+          onClick={() => { setShowForm(!showForm); setFormData({ id: null, title: {vi: '', en: ''}, description: {vi: '', en: ''}, details: {vi: '', en: ''}, imageUrl: '', demoUrl: '', sourceUrl: '', isFeatured: false }); }}
           className="flex items-center gap-2 px-6 py-2 bg-[#A3B18A] text-white rounded-xl hover:bg-[#8B9973] transition-colors"
         >
           <Plus size={20} /> {showForm ? 'Cancel' : 'Add Project'}
@@ -139,6 +139,12 @@ export default function ProjectsAdmin() {
                 <label className="block text-sm font-medium text-[#6B6B6B] mb-2">Source Code URL (Optional)</label>
                 <input type="text" value={formData.sourceUrl || ''} onChange={e => setFormData({...formData, sourceUrl: e.target.value})} className="w-full px-4 py-2 rounded-xl border border-[#E5E5E5] focus:outline-none focus:border-[#A3B18A]" />
               </div>
+            </div>
+            <div className="space-y-2">
+              <label className="flex items-center gap-3 text-sm font-medium text-[#4A4A4A] bg-[#FAF9F6] p-4 rounded-xl border border-[#A3B18A] cursor-pointer hover:bg-[#F5F5F5] transition-colors">
+                <input type="checkbox" checked={formData.isFeatured || false} onChange={e => setFormData({...formData, isFeatured: e.target.checked})} className="w-5 h-5 rounded border-[#A3B18A] text-[#A3B18A] focus:ring-[#A3B18A]" />
+                <span className="text-lg">🌟 Đánh dấu là dự án tâm huyết (Featured Masterpiece)</span>
+              </label>
             </div>
             <div className="space-y-2">
               <label className="block text-sm font-medium text-[#6B6B6B]">Image</label>

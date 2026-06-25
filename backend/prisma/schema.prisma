@@ -36,6 +36,7 @@ model Project {
   demoUrl     String?
   sourceUrl   String?
   details     Json?
+  isFeatured  Boolean  @default(false)
   createdAt   DateTime @default(now())
 }
 

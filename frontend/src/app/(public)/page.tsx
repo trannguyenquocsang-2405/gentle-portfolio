@@ -43,8 +43,9 @@ export default async function Page() {
       experiences: expRes,
       resumes: resRes
     };
-  } catch (e) {
-    console.error("Error fetching data on server:", e);
+  } catch (error: any) {
+    console.log(error.response?.config?.url);
+    console.log(error.response?.status);
   }
 
   return <HomeClient initialData={initialData} />;

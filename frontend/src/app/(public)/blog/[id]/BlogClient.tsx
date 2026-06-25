@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect } from 'react';
 import Link from 'next/link';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -15,8 +15,12 @@ interface Blog {
   updatedAt: string;
 }
 
-export default function BlogClient({ initialBlog, id }: { initialBlog: Blog | null, id: string }) {
+export default function BlogClient({ initialBlog, id }: { initialBlog: any, id: string }) {
   const { t, tData } = useLanguage();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   if (!initialBlog) {
     return (
