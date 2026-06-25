@@ -22,10 +22,6 @@ export default function ExperienceAdmin() {
   const [editLang, setEditLang] = useState<'vi'|'en'>('vi');
   const { tData } = useLanguage();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
       const data = await experienceService.getAll();
@@ -108,6 +104,10 @@ export default function ExperienceAdmin() {
     const date = new Date(dateString);
     return `${date.getMonth() + 1}/${date.getFullYear()}`;
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="space-y-6">

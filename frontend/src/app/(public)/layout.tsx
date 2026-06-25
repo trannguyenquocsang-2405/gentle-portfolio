@@ -58,6 +58,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDarkMode(localStorage.getItem('theme') === 'dark');
   }, []);
 

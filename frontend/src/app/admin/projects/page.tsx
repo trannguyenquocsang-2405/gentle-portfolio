@@ -16,10 +16,6 @@ export default function ProjectsAdmin() {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
   const fetchProjects = async () => {
     try {
       const data = await projectService.getAll();
@@ -91,6 +87,10 @@ export default function ProjectsAdmin() {
       alert('Failed to delete project');
     }
   };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
   return (
     <div className="space-y-6">

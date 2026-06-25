@@ -20,10 +20,6 @@ export default function SkillsAdmin() {
   const { tData } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
       const [skillsData, catsData] = await Promise.all([
@@ -106,6 +102,10 @@ export default function SkillsAdmin() {
     acc[catKey].push(skill);
     return acc;
   }, {} as Record<string, any[]>) : {};
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="space-y-8">

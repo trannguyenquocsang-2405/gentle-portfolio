@@ -13,10 +13,6 @@ export default function BlogAdmin() {
   const navigate = router.push.bind(router);
   const { tData } = useLanguage();
 
-  useEffect(() => {
-    fetchBlogs();
-  }, []);
-
   const fetchBlogs = async () => {
     try {
       const data = await blogService.getAll();
@@ -35,6 +31,10 @@ export default function BlogAdmin() {
       alert('Failed to delete blog');
     }
   };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
 
   return (
     <div className="space-y-6">

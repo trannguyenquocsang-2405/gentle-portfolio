@@ -11,10 +11,6 @@ export default function SocialLinksAdmin() {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    fetchLinks();
-  }, []);
-
   const fetchLinks = async () => {
     try {
       const data = await socialLinkService.getAll();
@@ -70,6 +66,10 @@ export default function SocialLinksAdmin() {
       alert('Failed to delete link');
     }
   };
+
+  useEffect(() => {
+    fetchLinks();
+  }, []);
 
   return (
     <div className="space-y-6">

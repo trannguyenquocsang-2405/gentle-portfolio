@@ -16,10 +16,6 @@ export default function ResumeAdmin() {
   const { tData } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
       const data = await resumeService.getAll();
@@ -71,6 +67,10 @@ export default function ResumeAdmin() {
       alert('Failed to delete resume');
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="space-y-8">
