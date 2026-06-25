@@ -15,10 +15,10 @@ A highly optimized, full-stack personal portfolio and blog platform equipped wit
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **Framework:** React 19 + TypeScript
+- **Framework:** Next.js 15 (App Router) + React 19 + TypeScript
 - **Styling:** Tailwind CSS 4 + Tailwind Typography
 - **Architecture:** Clean Architecture (Services, Contexts, Views)
-- **Routing & State:** React Router v7 + React Context API
+- **Routing & State:** Next.js App Router + React Context API
 - **Editor:** UIW React MD Editor (Markdown)
 
 ### Backend
@@ -68,9 +68,9 @@ npm install
 
 # Setup environment variables
 # Create a .env file and set your API URL
-# Example: VITE_API_URL=http://localhost:3000
+# Example: NEXT_PUBLIC_API_URL=http://localhost:3000
 
-# Start the Vite development server
+# Start the Next.js development server
 npm run dev
 ```
 
