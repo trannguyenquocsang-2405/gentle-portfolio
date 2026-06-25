@@ -1,5 +1,6 @@
 import './globals.css';
 import { Providers } from './providers';
+import NextTopLoader from 'nextjs-toploader';
 
 export const metadata = {
   title: 'Tran Nguyen Quoc Sang',
@@ -14,6 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <NextTopLoader color="#A3B18A" showSpinner={false} />
         <Providers>
           {children}
         </Providers>
