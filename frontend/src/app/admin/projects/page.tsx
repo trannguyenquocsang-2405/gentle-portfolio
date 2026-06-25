@@ -43,7 +43,8 @@ export default function ProjectsAdmin() {
     e.preventDefault();
     try {
       if (formData.id) {
-        await projectService.update(formData.id, formData);
+        const { id, ...updateData } = formData;
+        await projectService.update(formData.id, updateData);
       } else {
         const { id, ...postData } = formData;
         await projectService.create(postData);
